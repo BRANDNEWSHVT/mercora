@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
           fields: '*payment_collections.payments,*items,*items.metadata,*items.variant,*items.product'
         },
         headers,
-        cache: 'force-cache'
+        cache: 'no-cache'
       }
     )
     return order
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
         fields: '*items,+items.metadata,*items.variant,*items.product'
       },
       headers,
-      cache: 'force-cache'
+      cache: 'no-cache'
     }
   )
 

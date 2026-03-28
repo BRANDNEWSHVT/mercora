@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
           fields: '*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name'
         },
         headers,
-        cache: 'force-cache'
+        cache: 'no-cache'
       }
     )
     return cart

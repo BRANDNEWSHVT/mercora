@@ -1,12 +1,25 @@
 <script setup lang="ts">
 import { convertToLocale } from '~/utils/money'
+import { getApiErrorMessage } from '~/utils/api-error'
 
 const PICKUP_OPTION_ON = '__PICKUP_ON'
 const PICKUP_OPTION_OFF = '__PICKUP_OFF'
 
+interface ShippingMethod {
+  id: string
+  name: string
+  amount: number
+  price_type?: 'flat' | 'calculated' | string
+  insufficient_inventory?: boolean
+  service_zone?: {
+    fulfillment_set?: {
+      type?: string
+    }
+  }
+}
+
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  availableShippingMethods: any[]
+  availableShippingMethods: ShippingMethod[]
 }>()
 
 const { cart, setShippingMethod } = useCart()
@@ -22,22 +35,19 @@ const showPickupOptions = ref(PICKUP_OPTION_OFF)
 const calculatedPricesMap = ref<Record<string, number>>({})
 const isLoadingPrices = ref(true)
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const shippingMethods = computed(() =>
-  props.availableShippingMethods?.filter((sm: any) => sm.service_zone?.fulfillment_set?.type !== 'pickup') || []
+  props.availableShippingMethods?.filter(method => method.service_zone?.fulfillment_set?.type !== 'pickup') || []
 )
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pickupMethods = computed(() =>
-  props.availableShippingMethods?.filter((sm: any) => sm.service_zone?.fulfillment_set?.type === 'pickup') || []
+  props.availableShippingMethods?.filter(method => method.service_zone?.fulfillment_set?.type === 'pickup') || []
 )
 
 const hasPickupOptions = computed(() => !!pickupMethods.value.length)
 
 const currencyCode = computed(() => cart.value?.currency_code || 'usd')
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function formatAddress(address: any) {
+function formatAddress(address: Record<string, string | undefined> | null | undefined) {
   if (!address) return ''
   let ret = ''
   if (address.address_1) ret += ` ${address.address_1}`
@@ -53,7 +63,7 @@ onMounted(() => {
     selectedId.value = currentMethod.shipping_option_id
   }
 
-  if (pickupMethods.value.find((m: any) => m.id === selectedId.value)) { // eslint-disable-line @typescript-eslint/no-explicit-any
+  if (pickupMethods.value.find(method => method.id === selectedId.value)) {
     showPickupOptions.value = PICKUP_OPTION_ON
   }
 
@@ -77,7 +87,7 @@ async function handleSetShippingMethod(id: string, variant: 'shipping' | 'pickup
     await setShippingMethod(id, cart.value?.id)
   } catch (e: unknown) {
     selectedId.value = previousId
-    error.value = e instanceof Error ? e.message : 'Failed to set shipping method'
+    error.value = getApiErrorMessage(e, 'Failed to set shipping method')
   } finally {
     saving.value = false
   }
@@ -85,7 +95,7 @@ async function handleSetShippingMethod(id: string, variant: 'shipping' | 'pickup
 
 function handlePickupToggle() {
   const firstAvailable = pickupMethods.value.find(
-    (option: any) => !option.insufficient_inventory // eslint-disable-line @typescript-eslint/no-explicit-any
+    option => !option.insufficient_inventory
   )
   if (firstAvailable) {
     handleSetShippingMethod(firstAvailable.id, 'pickup')
@@ -195,7 +205,10 @@ watch(isOpen, () => {
                   {{ convertToLocale({ amount: calculatedPricesMap[option.id], currency_code: currencyCode }) }}
                 </template>
                 <template v-else-if="isLoadingPrices">
-                  <UIcon name="i-lucide-loader-2" class="animate-spin" />
+                  <UIcon
+                    name="i-lucide-loader-2"
+                    class="animate-spin"
+                  />
                 </template>
                 <template v-else>-</template>
               </span>
@@ -269,7 +282,10 @@ watch(isOpen, () => {
       </div>
     </template>
 
-    <div v-else class="text-small-regular">
+    <div
+      v-else
+      class="text-small-regular"
+    >
       <div
         v-if="cart && (cart.shipping_methods?.length ?? 0) > 0"
         class="flex flex-col w-1/3"

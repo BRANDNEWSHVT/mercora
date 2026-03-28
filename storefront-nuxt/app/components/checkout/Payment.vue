@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { paymentInfoMap } from '~/utils/constants'
+import { getApiErrorMessage } from '~/utils/api-error'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +47,7 @@ async function handleContinue() {
     await initiatePaymentSession(selectedId.value)
     router.push({ query: { step: 'review' } })
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Failed to set payment method'
+    error.value = getApiErrorMessage(e, 'Failed to set payment method')
   } finally {
     saving.value = false
   }

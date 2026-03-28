@@ -1,9 +1,17 @@
 <script setup lang="ts">
+import { apiFetch } from '~/utils/api'
+import { getApiErrorMessage } from '~/utils/api-error'
+
+interface TransferRequestResult {
+  id: string
+  email: string
+}
+
 const orderId = ref('')
 const loading = ref(false)
 const error = ref<string | null>(null)
 const showSuccess = ref(false)
-const successOrder = ref<{ id: string, email: string } | null>(null)
+const successOrder = ref<TransferRequestResult | null>(null)
 
 async function handleSubmit() {
   if (!orderId.value.trim()) return
@@ -13,15 +21,15 @@ async function handleSubmit() {
   showSuccess.value = false
 
   try {
-    const result = await $fetch('/api/orders/transfer', {
+    const result = await apiFetch<TransferRequestResult>('/api/orders/transfer', {
       method: 'POST',
-      body: { order_id: orderId.value },
+      body: { order_id: orderId.value }
     })
-    successOrder.value = result as any
+    successOrder.value = result
     showSuccess.value = true
     orderId.value = ''
-  } catch (e: any) {
-    error.value = e?.data?.message || e?.message || 'An error occurred'
+  } catch (e: unknown) {
+    error.value = getApiErrorMessage(e, 'An error occurred')
   } finally {
     loading.value = false
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+const { sortBy } = defineProps<{
   sortBy: string
 }>()
 
@@ -9,44 +9,36 @@ const emit = defineEmits<{
 
 const sortOptions = [
   { label: 'Latest Arrivals', value: 'created_at' },
-  { label: 'Price: Low → High', value: 'price_asc' },
-  { label: 'Price: High → Low', value: 'price_desc' }
+  { label: 'Price: Low -> High', value: 'price_asc' },
+  { label: 'Price: High -> Low', value: 'price_desc' }
 ]
-
-const items = computed(() =>
-  sortOptions.map(o => ({
-    label: o.label,
-    click: () => emit('setSort', o.value)
-  }))
-)
-
-const currentLabel = computed(() => {
-  return sortOptions.find(o => o.value === props.sortBy)?.label || 'Latest Arrivals'
-})
 </script>
 
 <template>
   <div
-    class="flex small:items-center gap-4 small:gap-8"
-    data-testid="sort-container"
+    class="flex small:flex-col gap-12 py-4 mb-8 small:px-0 pl-6 small:min-w-[250px] small:ml-[1.675rem]"
   >
-    <ClientOnly>
-      <UDropdownMenu :items="[items]">
-        <UButton
-          variant="ghost"
-          trailing-icon="i-lucide-chevron-down"
+    <div class="flex gap-x-3 flex-col gap-y-3">
+      <span class="txt-compact-small text-ui-fg-muted font-medium">
+        Sort by
+      </span>
+      <div data-testid="sort-container">
+        <div
+          v-for="option in sortOptions"
+          :key="option.value"
         >
-          Sort by: {{ currentLabel }}
-        </UButton>
-      </UDropdownMenu>
-      <template #fallback>
-        <UButton
-          variant="ghost"
-          trailing-icon="i-lucide-chevron-down"
-        >
-          Sort by: {{ currentLabel }}
-        </UButton>
-      </template>
-    </ClientOnly>
+          <button
+            type="button"
+            class="txt-compact-small text-ui-fg-subtle hover:text-ui-fg-base hover:cursor-pointer transition-colors"
+            :class="option.value === sortBy ? 'text-ui-fg-base' : ''"
+            data-testid="radio-label"
+            :data-active="option.value === sortBy"
+            @click="emit('setSort', option.value)"
+          >
+            {{ option.label }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

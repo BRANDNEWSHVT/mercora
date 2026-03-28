@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HttpTypes } from '@medusajs/types'
+import { apiFetch } from '~/utils/api'
 import { convertToLocale } from '~/utils/money'
 
 const { customer } = useCustomer()
@@ -8,7 +9,7 @@ const orders = ref<HttpTypes.StoreOrder[]>([])
 
 onMounted(async () => {
   try {
-    const data = await $fetch<HttpTypes.StoreOrder[]>('/api/orders', { params: { limit: 5 } })
+    const data = await apiFetch<HttpTypes.StoreOrder[]>('/api/orders', { query: { limit: 5 } })
     orders.value = data || []
   } catch {
     orders.value = []
@@ -107,7 +108,7 @@ const addressCount = computed(() => customer.value?.addresses?.length ?? 0)
                   :data-value="order.id"
                 >
                   <NuxtLinkLocale :to="`/account/orders/details/${order.id}`">
-                    <div class="bg-gray-50 flex justify-between items-center p-4 rounded-lg shadow-sm">
+                    <div class="bg-gray-50 flex justify-between items-center p-4">
                       <div class="grid grid-cols-3 grid-rows-2 text-small-regular gap-x-4 flex-1">
                         <span class="font-semibold">Date placed</span>
                         <span class="font-semibold">Order number</span>
@@ -132,7 +133,7 @@ const addressCount = computed(() => customer.value?.addresses?.length ?? 0)
                         <span class="sr-only">Go to order #{{ order.display_id }}</span>
                         <UIcon
                           name="i-lucide-chevron-down"
-                          class="-rotate-90"
+                          class="-rotate-90 size-4"
                         />
                       </button>
                     </div>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getApiErrorMessage } from '~/utils/api-error'
+
 const { cart, placeOrder } = useCart()
 const route = useRoute()
 const router = useRouter()
@@ -26,7 +28,7 @@ async function handlePlaceOrder() {
       router.push(`/${countryCode.value}/order/confirmed/${result.order.id}`)
     }
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'An error occurred placing the order'
+    error.value = getApiErrorMessage(e, 'An error occurred placing the order')
   } finally {
     placing.value = false
   }

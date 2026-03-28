@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { apiFetch } from '~/utils/api'
+import { getApiErrorMessage } from '~/utils/api-error'
+
 defineProps<{
   id: string
   token: string
@@ -11,7 +14,7 @@ async function handleAccept(id: string, token: string) {
   status.value = 'accepting'
   message.value = ''
   try {
-    await $fetch('/api/orders/transfer', {
+    await apiFetch('/api/orders/transfer', {
       method: 'POST',
       body: { id, token, action: 'accept' }
     })
@@ -19,7 +22,7 @@ async function handleAccept(id: string, token: string) {
     message.value = 'Order transfer accepted successfully.'
   } catch (e: unknown) {
     status.value = 'error'
-    message.value = e instanceof Error ? e.message : 'Failed to accept transfer'
+    message.value = getApiErrorMessage(e, 'Failed to accept transfer')
   }
 }
 
@@ -27,7 +30,7 @@ async function handleDecline(id: string, token: string) {
   status.value = 'declining'
   message.value = ''
   try {
-    await $fetch('/api/orders/transfer', {
+    await apiFetch('/api/orders/transfer', {
       method: 'POST',
       body: { id, token, action: 'decline' }
     })
@@ -35,7 +38,7 @@ async function handleDecline(id: string, token: string) {
     message.value = 'Order transfer declined.'
   } catch (e: unknown) {
     status.value = 'error'
-    message.value = e instanceof Error ? e.message : 'Failed to decline transfer'
+    message.value = getApiErrorMessage(e, 'Failed to decline transfer')
   }
 }
 </script>

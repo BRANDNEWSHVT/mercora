@@ -1,21 +1,46 @@
 <script setup lang="ts">
 import { isEqual } from 'lodash-es'
 
+interface ProductOptionValue {
+  option_id: string
+  value: string
+}
+
+interface ProductVariant {
+  id: string
+  options?: ProductOptionValue[]
+  manage_inventory?: boolean | null
+  allow_backorder?: boolean | null
+  inventory_quantity?: number | null
+}
+
+interface ProductOption {
+  id: string
+  title?: string | null
+}
+
+interface ProductDetails {
+  variants?: ProductVariant[]
+  options?: ProductOption[]
+}
+
+interface RegionDetails {
+  id: string
+}
+
 const props = defineProps<{
-  product: any
-  region?: any
+  product: ProductDetails
+  region?: RegionDetails | null
   disabled?: boolean
 }>()
 
-const route = useRoute()
-const countryCode = computed(() => route.params.countryCode as string)
 const { addToCart } = useCart()
 
 const options = ref<Record<string, string | undefined>>({})
 const isAdding = ref(false)
 
-const optionsAsKeymap = (variantOptions: any[]) => {
-  return variantOptions?.reduce((acc: Record<string, string>, varopt: any) => {
+const optionsAsKeymap = (variantOptions?: ProductOptionValue[]) => {
+  return variantOptions?.reduce((acc: Record<string, string>, varopt) => {
     acc[varopt.option_id] = varopt.value
     return acc
   }, {})
@@ -31,8 +56,8 @@ onMounted(() => {
 
 const selectedVariant = computed(() => {
   if (!props.product.variants?.length) return undefined
-  return props.product.variants.find((v: any) => {
-    const variantOptions = optionsAsKeymap(v.options)
+  return props.product.variants.find((variant) => {
+    const variantOptions = optionsAsKeymap(variant.options)
     return isEqual(variantOptions, options.value)
   })
 })
@@ -42,8 +67,8 @@ const setOptionValue = (optionId: string, value: string) => {
 }
 
 const isValidVariant = computed(() => {
-  return props.product.variants?.some((v: any) => {
-    const variantOptions = optionsAsKeymap(v.options)
+  return props.product.variants?.some((variant) => {
+    const variantOptions = optionsAsKeymap(variant.options)
     return isEqual(variantOptions, options.value)
   })
 })
@@ -69,9 +94,9 @@ onMounted(() => {
 })
 
 const handleAddToCart = async () => {
-  if (!selectedVariant.value?.id) return
+  if (!selectedVariant.value?.id || !props.region?.id) return
   isAdding.value = true
-  await addToCart(selectedVariant.value.id, 1, countryCode.value)
+  await addToCart(selectedVariant.value.id, 1, props.region.id)
   isAdding.value = false
 }
 
@@ -84,10 +109,19 @@ const buttonText = computed(() => {
 
 <template>
   <div>
-    <div ref="actionsRef" class="flex flex-col gap-y-2">
+    <div
+      ref="actionsRef"
+      class="flex flex-col gap-y-2"
+    >
       <div>
-        <div v-if="(product.variants?.length ?? 0) > 1" class="flex flex-col gap-y-4">
-          <div v-for="option in (product.options || [])" :key="option.id">
+        <div
+          v-if="(product.variants?.length ?? 0) > 1"
+          class="flex flex-col gap-y-4"
+        >
+          <div
+            v-for="option in (product.options || [])"
+            :key="option.id"
+          >
             <ProductOptionSelect
               :option="option"
               :current="options[option.id]"
@@ -101,7 +135,10 @@ const buttonText = computed(() => {
         </div>
       </div>
 
-      <ProductPrice :product="product" :variant="selectedVariant" />
+      <ProductPrice
+        :product="product"
+        :variant="selectedVariant"
+      />
 
       <UButton
         block

@@ -12,29 +12,34 @@ const countryCode = useCountryCode()
   <div>
     <div
       v-if="orders.length"
-      class="flex flex-col gap-y-8"
+      class="flex flex-col gap-y-8 w-full"
     >
-      <AccountOrderCard
+      <div
         v-for="order in orders"
         :key="order.id"
-        :order="order"
-      />
+        class="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
+      >
+        <AccountOrderCard :order="order" />
+      </div>
     </div>
     <div
       v-else
-      class="flex flex-col items-center gap-y-4 text-center w-full"
+      class="w-full flex flex-col items-center gap-y-4"
+      data-testid="no-orders-container"
     >
       <h2 class="text-large-semi">
         Nothing to see here
       </h2>
-      <p class="text-base-regular text-ui-fg-subtle max-w-md">
+      <p class="text-base-regular">
         You don't have any orders yet, let us change that :)
       </p>
-      <NuxtLink :to="`/${countryCode}`">
-        <UButton size="lg">
-          Continue shopping
-        </UButton>
-      </NuxtLink>
+      <div class="mt-4">
+        <NuxtLink :to="`/${countryCode}`">
+          <UButton data-testid="continue-shopping-button">
+            Continue shopping
+          </UButton>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

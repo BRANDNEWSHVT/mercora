@@ -1,4 +1,5 @@
 import type { HttpTypes } from '@medusajs/types'
+import { apiFetch } from '~/utils/api'
 
 export function useCart() {
   const cart = useState<HttpTypes.StoreCart | null>('cart', () => null)
@@ -7,7 +8,7 @@ export function useCart() {
   const fetchCart = async () => {
     loading.value = true
     try {
-      const data = await $fetch<HttpTypes.StoreCart | null>('/api/cart')
+      const data = await apiFetch<HttpTypes.StoreCart | null>('/api/cart')
       cart.value = data
     } catch {
       cart.value = null
@@ -20,7 +21,7 @@ export function useCart() {
   const addToCart = async (variantId: string, quantity: number, regionId: string) => {
     loading.value = true
     try {
-      await $fetch('/api/cart/add-item', {
+      await apiFetch('/api/cart/add-item', {
         method: 'POST',
         body: { variant_id: variantId, quantity, region_id: regionId }
       })
@@ -33,7 +34,7 @@ export function useCart() {
   const updateLineItem = async (lineId: string, quantity: number) => {
     loading.value = true
     try {
-      await $fetch('/api/cart/update-item', {
+      await apiFetch('/api/cart/update-item', {
         method: 'POST',
         body: { line_id: lineId, quantity }
       })
@@ -46,7 +47,7 @@ export function useCart() {
   const deleteLineItem = async (lineId: string) => {
     loading.value = true
     try {
-      await $fetch('/api/cart/delete-item', {
+      await apiFetch('/api/cart/delete-item', {
         method: 'POST',
         body: { line_id: lineId }
       })
@@ -56,10 +57,10 @@ export function useCart() {
     }
   }
 
-  const updateCart = async (data: any) => {
+  const updateCart = async (data: Record<string, unknown>) => {
     loading.value = true
     try {
-      await $fetch('/api/cart/update', {
+      await apiFetch('/api/cart/update', {
         method: 'POST',
         body: data
       })
@@ -70,7 +71,7 @@ export function useCart() {
   }
 
   const applyPromotions = async (codes: string[]) => {
-    await $fetch('/api/cart/promotions', {
+    await apiFetch('/api/cart/promotions', {
       method: 'POST',
       body: { codes }
     })
@@ -78,7 +79,7 @@ export function useCart() {
   }
 
   const setShippingMethod = async (optionId: string, cartId?: string) => {
-    await $fetch('/api/cart/shipping-method', {
+    await apiFetch('/api/cart/shipping-method', {
       method: 'POST',
       body: { option_id: optionId, cart_id: cartId }
     })
@@ -86,7 +87,12 @@ export function useCart() {
   }
 
   const placeOrder = async () => {
-    const result = await $fetch<any>('/api/cart/complete', {
+    const result = await apiFetch<{
+      type: 'order' | 'cart'
+      order?: HttpTypes.StoreOrder
+      cart?: HttpTypes.StoreCart
+      countryCode?: string
+    }>('/api/cart/complete', {
       method: 'POST'
     })
     if (result.type === 'order') {
@@ -96,7 +102,7 @@ export function useCart() {
   }
 
   const initiatePaymentSession = async (providerId: string) => {
-    await $fetch('/api/cart/payment-session', {
+    await apiFetch('/api/cart/payment-session', {
       method: 'POST',
       body: {
         cart: { id: cart.value?.id },
@@ -108,7 +114,7 @@ export function useCart() {
 
   const fetchShippingOptions = async () => {
     if (!cart.value?.id) return []
-    return await $fetch<Record<string, unknown>[]>('/api/cart/shipping-options')
+    return await apiFetch<Record<string, unknown>[]>('/api/cart/shipping-options')
   }
 
   const totalItems = computed(() => {

@@ -4,9 +4,9 @@ const countryCode = computed(() => route.params.countryCode as string)
 </script>
 
 <template>
-  <div class="flex items-center justify-between bg-white">
+  <div class="flex items-center justify-between gap-6 bg-white">
     <div>
-      <h2 class="txt-xlarge">
+      <h2 class="txt-xlarge text-ui-fg-base">
         Already have an account?
       </h2>
       <p class="txt-medium text-ui-fg-subtle mt-2">
@@ -14,13 +14,13 @@ const countryCode = computed(() => route.params.countryCode as string)
       </p>
     </div>
     <NuxtLink :to="`/${countryCode}/account`">
-      <UButton
-        variant="outline"
-        class="h-10"
+      <button
+        type="button"
+        class="inline-flex h-10 items-center justify-center rounded-md border border-ui-border-base px-4 text-sm font-medium text-ui-fg-base transition-colors hover:bg-ui-bg-subtle"
         data-testid="sign-in-button"
       >
         Sign in
-      </UButton>
+      </button>
     </NuxtLink>
   </div>
 </template>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getApiErrorMessage } from '~/utils/api-error'
+
 const emit = defineEmits<{
   'switch-view': []
 }>()
@@ -16,7 +18,7 @@ async function handleSubmit() {
   try {
     await login(email.value, password.value)
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Invalid email or password'
+    error.value = getApiErrorMessage(e, 'Invalid email or password')
   } finally {
     loading.value = false
   }
@@ -59,7 +61,7 @@ async function handleSubmit() {
       </p>
       <UButton
         type="submit"
-        class="w-full mt-6"
+        class="w-full mt-6 text-center"
         size="lg"
         :loading="loading"
       >

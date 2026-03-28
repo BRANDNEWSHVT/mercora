@@ -1,19 +1,32 @@
 <script setup lang="ts">
+import type { FetchError } from 'ofetch'
+import { apiFetch } from '~/utils/api'
+
 const route = useRoute()
 const orderId = computed(() => route.params.id as string)
 const token = computed(() => route.params.token as string)
 
-const result = ref<{ success: boolean; error?: string }>({ success: false })
+const result = ref<{ success: boolean, error?: string }>({ success: false })
+
+const getErrorMessage = (error: unknown) => {
+  return (error as FetchError)?.data?.message
+    || (error as Error)?.message
+    || 'Unknown error'
+}
 
 onMounted(async () => {
   try {
-    await $fetch('/api/orders', {
+    await apiFetch('/api/orders/transfer', {
       method: 'POST',
-      body: { action: 'accept-transfer', orderId: orderId.value, token: token.value },
+      body: {
+        id: orderId.value,
+        token: token.value,
+        action: 'accept'
+      }
     })
     result.value = { success: true }
-  } catch (e: any) {
-    result.value = { success: false, error: e.message || 'Unknown error' }
+  } catch (error: unknown) {
+    result.value = { success: false, error: getErrorMessage(error) }
   }
 })
 </script>
@@ -23,12 +36,23 @@ onMounted(async () => {
     <OrderTransferImage />
     <div class="flex flex-col gap-y-6">
       <template v-if="result.success">
-        <h1 class="text-xl text-zinc-900">Order transferred!</h1>
-        <p class="text-zinc-600">Order {{ orderId }} has been successfully transferred to the new owner.</p>
+        <h1 class="text-xl text-zinc-900">
+          Order transferred!
+        </h1>
+        <p class="text-zinc-600">
+          Order {{ orderId }} has been successfully transferred to the new owner.
+        </p>
       </template>
       <template v-else>
-        <p class="text-zinc-600">There was an error accepting the transfer. Please try again.</p>
-        <p v-if="result.error" class="text-red-500">Error message: {{ result.error }}</p>
+        <p class="text-zinc-600">
+          There was an error accepting the transfer. Please try again.
+        </p>
+        <p
+          v-if="result.error"
+          class="text-red-500"
+        >
+          Error message: {{ result.error }}
+        </p>
       </template>
     </div>
   </div>

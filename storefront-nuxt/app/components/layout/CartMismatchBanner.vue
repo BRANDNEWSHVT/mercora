@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { apiFetch } from '~/utils/api'
+
 defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customer: any
@@ -6,6 +8,7 @@ defineProps<{
   cart: any
 }>()
 
+const { fetchCart } = useCart()
 const isPending = ref(false)
 const actionText = ref('Run transfer again')
 
@@ -13,9 +16,15 @@ const handleSubmit = async () => {
   try {
     isPending.value = true
     actionText.value = 'Transferring..'
-    await $fetch('/api/customer/login', { method: 'POST', body: { transfer: true } })
+    await apiFetch('/api/customer/login', {
+      method: 'POST',
+      body: { transfer: true }
+    })
+    await fetchCart()
+    actionText.value = 'Transferred'
   } catch {
     actionText.value = 'Run transfer again'
+  } finally {
     isPending.value = false
   }
 }

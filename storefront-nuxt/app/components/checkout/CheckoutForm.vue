@@ -40,14 +40,11 @@ async function fetchPaymentMethods() {
 <template>
   <div
     v-if="cart"
-    class="w-full flex flex-col gap-y-8"
+    class="w-full grid grid-cols-1 gap-y-8"
   >
     <CheckoutAddresses />
-    <CommonDivider />
     <CheckoutShipping :available-shipping-methods="shippingMethods" />
-    <CommonDivider />
     <CheckoutPayment :available-payment-methods="paymentMethods" />
-    <CommonDivider />
     <CheckoutReview />
   </div>
 </template>

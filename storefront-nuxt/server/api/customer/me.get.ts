@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
         method: 'GET',
         query: { fields: '*orders' },
         headers,
-        cache: 'force-cache'
+        cache: 'no-cache'
       }
     )
     return customer

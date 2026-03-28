@@ -4,11 +4,17 @@ import type { HttpTypes } from '@medusajs/types'
 defineProps<{
   order: HttpTypes.StoreOrder
 }>()
+
+const onboardingCookie = useCookie('_medusa_onboarding')
 </script>
 
 <template>
   <div class="py-6 min-h-[calc(100vh-64px)]">
     <div class="content-container flex flex-col justify-center items-center gap-y-10 max-w-4xl h-full w-full">
+      <OrderOnboardingCta
+        v-if="onboardingCookie === 'true'"
+        :order-id="order.id"
+      />
       <div
         class="flex flex-col gap-4 max-w-4xl h-full bg-white w-full py-10"
         data-testid="order-complete-container"

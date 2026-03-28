@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HttpTypes } from '@medusajs/types'
+import { getApiErrorMessage } from '~/utils/api-error'
 
 const props = defineProps<{
   customer: HttpTypes.StoreCustomer
@@ -31,7 +32,7 @@ async function handleSave() {
     isSuccess.value = true
   } catch (e: unknown) {
     isError.value = true
-    errorMessage.value = e instanceof Error ? e.message : 'Failed to update name'
+    errorMessage.value = getApiErrorMessage(e, 'Failed to update name')
   }
 }
 

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { HttpTypes } from '@medusajs/types'
+import { apiFetch } from '~/utils/api'
+import { getApiErrorMessage } from '~/utils/api-error'
 
 const props = defineProps<{
   customer: HttpTypes.StoreCustomer
@@ -71,12 +73,12 @@ async function handleSave() {
     const address = { ...form }
 
     if (editingAddress.value) {
-      await $fetch('/api/customer/address', {
+      await apiFetch('/api/customer/address', {
         method: 'POST',
         body: { action: 'update', addressId: editingAddress.value.id, address }
       })
     } else {
-      await $fetch('/api/customer/address', {
+      await apiFetch('/api/customer/address', {
         method: 'POST',
         body: { action: 'create', address }
       })
@@ -84,7 +86,7 @@ async function handleSave() {
     await fetchCustomer()
     showModal.value = false
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Failed to save address'
+    error.value = getApiErrorMessage(e, 'Failed to save address')
   } finally {
     saving.value = false
   }
@@ -92,13 +94,13 @@ async function handleSave() {
 
 async function handleDelete(addressId: string) {
   try {
-    await $fetch('/api/customer/address', {
+    await apiFetch('/api/customer/address', {
       method: 'POST',
       body: { action: 'delete', addressId }
     })
     await fetchCustomer()
-  } catch {
-    // Silently fail
+  } catch (e: unknown) {
+    error.value = getApiErrorMessage(e, 'Failed to delete address')
   }
 }
 
@@ -189,102 +191,102 @@ function formatAddress(address: HttpTypes.StoreCustomerAddress) {
     <ClientOnly>
       <UModal v-model:open="showModal">
         <template #content>
-        <div class="p-6">
-          <h3 class="text-large-semi mb-4">
-            {{ editingAddress ? 'Edit address' : 'Add new address' }}
-          </h3>
-          <form
-            class="flex flex-col gap-y-3"
-            @submit.prevent="handleSave"
-          >
-            <div class="grid grid-cols-2 gap-3">
-              <UInput
-                v-model="form.first_name"
-                placeholder="First name"
-                required
-              />
-              <UInput
-                v-model="form.last_name"
-                placeholder="Last name"
-                required
-              />
-            </div>
-            <UInput
-              v-model="form.company"
-              placeholder="Company (optional)"
-            />
-            <UInput
-              v-model="form.address_1"
-              placeholder="Address"
-              required
-            />
-            <UInput
-              v-model="form.address_2"
-              placeholder="Apartment, suite, etc. (optional)"
-            />
-            <div class="grid grid-cols-2 gap-3">
-              <UInput
-                v-model="form.postal_code"
-                placeholder="Postal code"
-                required
-              />
-              <UInput
-                v-model="form.city"
-                placeholder="City"
-                required
-              />
-            </div>
-            <UInput
-              v-model="form.province"
-              placeholder="State / Province"
-            />
-            <select
-              v-model="form.country_code"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-              required
+          <div class="p-6">
+            <h3 class="text-large-semi mb-4">
+              {{ editingAddress ? 'Edit address' : 'Add new address' }}
+            </h3>
+            <form
+              class="flex flex-col gap-y-3"
+              @submit.prevent="handleSave"
             >
-              <option
-                value=""
-                disabled
+              <div class="grid grid-cols-2 gap-3">
+                <UInput
+                  v-model="form.first_name"
+                  placeholder="First name"
+                  required
+                />
+                <UInput
+                  v-model="form.last_name"
+                  placeholder="Last name"
+                  required
+                />
+              </div>
+              <UInput
+                v-model="form.company"
+                placeholder="Company (optional)"
+              />
+              <UInput
+                v-model="form.address_1"
+                placeholder="Address"
+                required
+              />
+              <UInput
+                v-model="form.address_2"
+                placeholder="Apartment, suite, etc. (optional)"
+              />
+              <div class="grid grid-cols-2 gap-3">
+                <UInput
+                  v-model="form.postal_code"
+                  placeholder="Postal code"
+                  required
+                />
+                <UInput
+                  v-model="form.city"
+                  placeholder="City"
+                  required
+                />
+              </div>
+              <UInput
+                v-model="form.province"
+                placeholder="State / Province"
+              />
+              <select
+                v-model="form.country_code"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                required
               >
-                Country
-              </option>
-              <option
-                v-for="country in countries"
-                :key="country.iso_2"
-                :value="country.iso_2"
+                <option
+                  value=""
+                  disabled
+                >
+                  Country
+                </option>
+                <option
+                  v-for="country in countries"
+                  :key="country.iso_2"
+                  :value="country.iso_2"
+                >
+                  {{ country.display_name }}
+                </option>
+              </select>
+              <UInput
+                v-model="form.phone"
+                type="tel"
+                placeholder="Phone (optional)"
+              />
+              <p
+                v-if="error"
+                class="text-rose-500 text-small-regular"
               >
-                {{ country.display_name }}
-              </option>
-            </select>
-            <UInput
-              v-model="form.phone"
-              type="tel"
-              placeholder="Phone (optional)"
-            />
-            <p
-              v-if="error"
-              class="text-rose-500 text-small-regular"
-            >
-              {{ error }}
-            </p>
-            <div class="flex justify-end gap-x-2 mt-4">
-              <UButton
-                variant="outline"
-                @click="showModal = false"
-              >
-                Cancel
-              </UButton>
-              <UButton
-                type="submit"
-                :loading="saving"
-              >
-                Save
-              </UButton>
-            </div>
-          </form>
-        </div>
-      </template>
+                {{ error }}
+              </p>
+              <div class="flex justify-end gap-x-2 mt-4">
+                <UButton
+                  variant="outline"
+                  @click="showModal = false"
+                >
+                  Cancel
+                </UButton>
+                <UButton
+                  type="submit"
+                  :loading="saving"
+                >
+                  Save
+                </UButton>
+              </div>
+            </form>
+          </div>
+        </template>
       </UModal>
     </ClientOnly>
   </div>

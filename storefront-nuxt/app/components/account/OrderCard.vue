@@ -8,8 +8,12 @@ const props = defineProps<{
 
 const countryCode = useCountryCode()
 
-const itemCount = computed(() =>
+const numberOfLines = computed(() =>
   props.order.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0
+)
+
+const numberOfProducts = computed(() =>
+  props.order.items?.length ?? 0
 )
 
 const firstThreeItems = computed(() =>
@@ -17,48 +21,81 @@ const firstThreeItems = computed(() =>
 )
 
 function formatDate(date: string | Date) {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
+  return new Date(date).toDateString()
 }
 </script>
 
 <template>
-  <div class="border border-gray-200 rounded-lg p-4 flex flex-col small:flex-row small:items-center small:justify-between gap-y-4">
-    <div class="flex flex-col gap-y-1">
-      <div class="flex items-center gap-x-2">
-        <h3 class="text-base-semi">
-          Order #{{ order.display_id }}
-        </h3>
-        <span class="text-small-regular text-ui-fg-subtle">
-          {{ formatDate(order.created_at) }}
-        </span>
+  <div
+    class="bg-white flex flex-col"
+    data-testid="order-card"
+  >
+    <div class="uppercase text-large-semi mb-1">
+      #
+      <span data-testid="order-display-id">
+        {{ order.display_id }}
+      </span>
+    </div>
+    <div class="flex items-center divide-x divide-gray-200 text-small-regular text-ui-fg-base">
+      <span
+        class="pr-2"
+        data-testid="order-created-at"
+      >
+        {{ formatDate(order.created_at) }}
+      </span>
+      <span
+        class="px-2"
+        data-testid="order-amount"
+      >
+        {{ convertToLocale({ amount: order.total, currency_code: order.currency_code }) }}
+      </span>
+      <span class="pl-2">
+        {{ numberOfLines }} {{ numberOfLines > 1 ? 'items' : 'item' }}
+      </span>
+    </div>
+    <div class="grid grid-cols-2 small:grid-cols-4 gap-4 my-4">
+      <div
+        v-for="item in firstThreeItems"
+        :key="item.id"
+        class="flex flex-col gap-y-2"
+        data-testid="order-item"
+      >
+        <ProductThumbnail
+          :thumbnail="item.thumbnail"
+          :images="[]"
+          size="full"
+        />
+        <div class="flex items-center text-small-regular text-ui-fg-base">
+          <span
+            class="text-ui-fg-base font-semibold"
+            data-testid="item-title"
+          >
+            {{ item.title }}
+          </span>
+          <span class="ml-2">x</span>
+          <span data-testid="item-quantity">{{ item.quantity }}</span>
+        </div>
       </div>
-      <div class="flex items-center gap-x-4 text-small-regular text-ui-fg-subtle">
-        <span>
-          {{ convertToLocale({ amount: order.total, currency_code: order.currency_code }) }}
+      <div
+        v-if="numberOfProducts > 4"
+        class="w-full h-full flex flex-col items-center justify-center"
+      >
+        <span class="text-small-regular text-ui-fg-base">
+          + {{ numberOfLines - 4 }}
         </span>
-        <span>{{ itemCount }} {{ itemCount === 1 ? 'item' : 'items' }}</span>
+        <span class="text-small-regular text-ui-fg-base">more</span>
       </div>
     </div>
-
-    <div class="flex items-center gap-x-4">
-      <div class="flex -space-x-3">
-        <ProductThumbnail
-          v-for="item in firstThreeItems"
-          :key="item.id"
-          :thumbnail="item.thumbnail"
-          size="small"
-          class="w-12 h-12 rounded border-2 border-white"
-        />
-      </div>
+    <div class="flex justify-end">
       <NuxtLink
         :to="`/${countryCode}/account/orders/details/${order.id}`"
-        class="text-ui-fg-interactive text-small-semi"
       >
-        See details →
+        <UButton
+          data-testid="order-details-link"
+          variant="outline"
+        >
+          See details
+        </UButton>
       </NuxtLink>
     </div>
   </div>

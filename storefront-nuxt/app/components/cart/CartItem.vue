@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getApiErrorMessage } from '~/utils/api-error'
+
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   item: any
@@ -17,16 +19,33 @@ const maxQuantity = computed(() => {
   return 10
 })
 
+const quantityOptions = computed(() => {
+  const currentQuantity = Number(props.item.quantity) || 1
+  const optionCount = Math.max(1, Math.min(10, maxQuantity.value), currentQuantity)
+
+  return Array.from({ length: optionCount }, (_, index) => index + 1)
+})
+
 const isUpdating = ref(false)
 const error = ref<string | null>(null)
+const selectedQuantity = ref(String(props.item.quantity))
+
+watch(
+  () => props.item.quantity,
+  (quantity) => {
+    selectedQuantity.value = String(quantity)
+  },
+  { immediate: true }
+)
 
 const handleQuantityChange = async (qty: number) => {
   error.value = null
   isUpdating.value = true
   try {
     await updateLineItem(props.item.id, qty)
-  } catch (err: any) {
-    error.value = err.message
+  } catch (err: unknown) {
+    selectedQuantity.value = String(props.item.quantity)
+    error.value = getApiErrorMessage(err, 'Failed to update item quantity')
   } finally {
     isUpdating.value = false
   }
@@ -34,8 +53,11 @@ const handleQuantityChange = async (qty: number) => {
 </script>
 
 <template>
-  <tr class="w-full border-b border-ui-border-base" data-testid="product-row">
-    <td class="pl-0! p-4 w-24">
+  <tr
+    class="w-full border-b border-ui-border-base"
+    data-testid="product-row"
+  >
+    <td class="pl-0! w-24 py-5 pr-4 align-middle">
       <NuxtLink
         :to="`/${countryCode}/products/${item.product_handle}`"
         :class="['flex', type === 'preview' ? 'w-16' : 'small:w-24 w-12']"
@@ -48,42 +70,77 @@ const handleQuantityChange = async (qty: number) => {
       </NuxtLink>
     </td>
 
-    <td class="text-left p-4">
-      <span class="txt-medium-plus text-ui-fg-base" data-testid="product-title">
+    <td class="py-5 pr-4 text-left align-middle">
+      <span
+        class="txt-medium-plus text-ui-fg-base"
+        data-testid="product-title"
+      >
         {{ item.product_title }}
       </span>
-      <CommonLineItemOptions :variant="item.variant" data-testid="product-variant" />
+      <CommonLineItemOptions
+        :variant="item.variant"
+        data-testid="product-variant"
+      />
     </td>
 
-    <td v-if="type === 'full'" class="p-4">
+    <td
+      v-if="type === 'full'"
+      class="py-5 pr-4 align-middle"
+    >
       <div class="flex gap-2 items-center w-28">
-        <CommonDeleteButton :id="item.id" data-testid="product-delete-button" />
-        <select
-          :value="item.quantity"
-          class="w-14 h-10 p-4 border border-ui-border-base rounded-md text-sm bg-white"
+        <CommonDeleteButton
+          :id="item.id"
+          data-testid="product-delete-button"
+        />
+        <CartItemSelect
+          v-model="selectedQuantity"
           :disabled="isUpdating"
           data-testid="product-select-button"
-          @change="handleQuantityChange(Number(($event.target as HTMLSelectElement).value))"
+          @change="handleQuantityChange(Number($event))"
         >
           <option
-            v-for="q in Math.min(maxQuantity, 10)"
+            v-for="q in quantityOptions"
             :key="q"
             :value="q"
           >
             {{ q }}
           </option>
-        </select>
-        <svg v-if="isUpdating" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </CartItemSelect>
+        <svg
+          v-if="isUpdating"
+          class="animate-spin h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
         </svg>
       </div>
-      <p v-if="error" class="text-rose-500 text-small-regular mt-1" data-testid="product-error-message">
+      <p
+        v-if="error"
+        class="text-rose-500 text-small-regular mt-1"
+        data-testid="product-error-message"
+      >
         {{ error }}
       </p>
     </td>
 
-    <td v-if="type === 'full'" class="hidden small:table-cell p-4">
+    <td
+      v-if="type === 'full'"
+      class="hidden py-5 pr-4 align-middle small:table-cell"
+    >
       <CommonLineItemUnitPrice
         :item="item"
         style-type="tight"
@@ -91,11 +148,14 @@ const handleQuantityChange = async (qty: number) => {
       />
     </td>
 
-    <td class="pr-0! p-4">
+    <td class="pr-0! py-5 text-right align-middle">
       <span
         :class="['pr-0!', type === 'preview' ? 'flex flex-col items-end h-full justify-center' : '']"
       >
-        <span v-if="type === 'preview'" class="flex gap-x-1">
+        <span
+          v-if="type === 'preview'"
+          class="flex gap-x-1"
+        >
           <span class="text-ui-fg-muted">{{ item.quantity }}x </span>
           <CommonLineItemUnitPrice
             :item="item"

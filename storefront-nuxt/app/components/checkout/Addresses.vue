@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { HttpTypes } from '@medusajs/types'
 import compareAddresses from '~/utils/compare-addresses'
+import { getApiErrorMessage } from '~/utils/api-error'
 
 const { cart, updateCart } = useCart()
 const { customer } = useCustomer()
@@ -120,7 +121,7 @@ async function handleSubmit() {
     })
     router.push({ query: { step: 'delivery' } })
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Failed to update address'
+    error.value = getApiErrorMessage(e, 'Failed to update address')
   } finally {
     saving.value = false
   }

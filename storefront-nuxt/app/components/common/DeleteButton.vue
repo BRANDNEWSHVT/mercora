@@ -7,10 +7,13 @@ const { deleteLineItem } = useCart()
 const isDeleting = ref(false)
 
 const handleDelete = async () => {
+  if (isDeleting.value) return
   isDeleting.value = true
   try {
     await deleteLineItem(props.id)
   } catch {
+    // Keep local failure silent but restore the control.
+  } finally {
     isDeleting.value = false
   }
 }
@@ -19,7 +22,9 @@ const handleDelete = async () => {
 <template>
   <div class="flex items-center justify-between text-small-regular">
     <button
-      class="flex gap-x-1 text-ui-fg-subtle hover:text-ui-fg-base cursor-pointer"
+      type="button"
+      class="flex items-center text-ui-fg-subtle transition-colors hover:text-ui-fg-base disabled:cursor-not-allowed"
+      :disabled="isDeleting"
       @click="handleDelete"
     >
       <UIcon
@@ -32,7 +37,7 @@ const handleDelete = async () => {
         name="i-lucide-trash-2"
         class="w-4 h-4"
       />
-      <span><slot /></span>
+      <span class="sr-only"><slot>Delete item</slot></span>
     </button>
   </div>
 </template>

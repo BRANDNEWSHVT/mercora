@@ -10,8 +10,8 @@ const { customer } = useCustomer()
       data-testid="cart-container"
     >
       <template v-if="cart?.items?.length">
-        <div class="grid grid-cols-1 small:grid-cols-[1fr_360px] gap-x-40">
-          <div class="flex flex-col bg-white py-6">
+        <div class="grid grid-cols-1 gap-y-10 small:grid-cols-[1fr_360px] small:gap-x-40 small:gap-y-0">
+          <div class="flex flex-col gap-y-6 bg-white py-6">
             <template v-if="!customer">
               <CartSignInPrompt />
               <CommonDivider />
@@ -23,7 +23,9 @@ const { customer } = useCustomer()
           </div>
           <div class="relative">
             <div class="flex flex-col gap-y-8 sticky top-12">
-              <CartSummary />
+              <div class="bg-white py-6">
+                <CartSummary />
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   category: any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,50 +9,86 @@ defineProps<{
 const route = useRoute()
 const router = useRouter()
 
-const sortBy = ref((route.query.sortBy as string) || 'created_at')
-const page = ref(Number(route.query.page) || 1)
+const sortBy = computed(() => (route.query.sortBy as string) || 'created_at')
+const page = computed(() => Number(route.query.page) || 1)
 
 const setSort = (value: string) => {
-  sortBy.value = value
-  page.value = 1
   router.push({ query: { ...route.query, sortBy: value, page: '1' } })
 }
 
 const setPage = (p: number) => {
-  page.value = p
   router.push({ query: { ...route.query, page: String(p) } })
 }
+
+const parents = computed(() => {
+  const items = []
+  let current = props.category?.parent_category
+
+  while (current) {
+    items.push(current)
+    current = current.parent_category
+  }
+
+  return items
+})
 </script>
 
 <template>
   <div
-    class="content-container py-6"
+    class="flex flex-col small:flex-row small:items-start py-6 content-container"
     data-testid="category-container"
   >
-    <div class="mb-8">
-      <h1 class="text-2xl-semi">
-        {{ category.name }}
-      </h1>
-      <p
-        v-if="category.description"
-        class="text-base-regular text-ui-fg-subtle mt-2"
-      >
-        {{ category.description }}
-      </p>
-    </div>
-    <div class="flex flex-col small:flex-row small:items-start">
-      <StoreRefinementList
-        :sort-by="sortBy"
-        @set-sort="setSort"
-      />
-      <div class="flex-1">
-        <StorePaginatedProducts
-          :sort-by="sortBy"
-          :page="page"
-          :category-id="category.id"
-          @page-change="setPage"
-        />
+    <StoreRefinementList
+      :sort-by="sortBy"
+      @set-sort="setSort"
+    />
+    <div class="w-full">
+      <div class="flex flex-row mb-8 text-2xl-semi gap-4">
+        <span
+          v-for="parent in parents"
+          :key="parent.id"
+          class="text-ui-fg-subtle"
+        >
+          <NuxtLink
+            :to="`/${route.params.countryCode}/categories/${parent.handle}`"
+            class="mr-4 hover:text-black"
+            data-testid="sort-by-link"
+          >
+            {{ parent.name }}
+          </NuxtLink>
+          /
+        </span>
+        <h1 data-testid="category-page-title">
+          {{ category.name }}
+        </h1>
       </div>
+      <div
+        v-if="category.description"
+        class="mb-8 text-base-regular"
+      >
+        <p>{{ category.description }}</p>
+      </div>
+      <div
+        v-if="category.category_children?.length"
+        class="mb-8 text-base-large"
+      >
+        <ul class="grid grid-cols-1 gap-2">
+          <li
+            v-for="child in category.category_children"
+            :key="child.id"
+          >
+            <CommonInteractiveLink :href="`/categories/${child.handle}`">
+              {{ child.name }}
+            </CommonInteractiveLink>
+          </li>
+        </ul>
+      </div>
+      <StorePaginatedProducts
+        :sort-by="sortBy"
+        :page="page"
+        :category-id="category.id"
+        @page-change="setPage"
+      />
     </div>
   </div>
 </template>

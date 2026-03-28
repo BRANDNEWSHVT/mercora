@@ -24,7 +24,7 @@ const queryKey = computed(() => {
 })
 
 const { data, pending } = useAsyncData(
-  queryKey.value,
+  queryKey,
   async () => {
     const region = await getRegion(countryCode.value)
     if (!region) return { products: [], count: 0 }
@@ -55,12 +55,31 @@ const products = computed(() => (data.value as any)?.products ?? [])
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const totalCount = computed(() => (data.value as any)?.count ?? 0)
 const totalPages = computed(() => Math.ceil(totalCount.value / props.productsPerPage))
+
+const visiblePages = computed(() => {
+  const pageNumbers: Array<number | string> = []
+
+  const arrayRange = (start: number, stop: number) =>
+    Array.from({ length: stop - start + 1 }, (_, index) => start + index)
+
+  if (totalPages.value <= 7) {
+    pageNumbers.push(...arrayRange(1, totalPages.value))
+  } else if (props.page <= 4) {
+    pageNumbers.push(...arrayRange(1, 5), 'ellipsis-1', totalPages.value)
+  } else if (props.page >= totalPages.value - 3) {
+    pageNumbers.push(1, 'ellipsis-2', ...arrayRange(totalPages.value - 4, totalPages.value))
+  } else {
+    pageNumbers.push(1, 'ellipsis-3', ...arrayRange(props.page - 1, props.page + 1), 'ellipsis-4', totalPages.value)
+  }
+
+  return pageNumbers
+})
 </script>
 
 <template>
   <div>
     <ul
-      class="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+      class="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
       data-testid="products-list"
     >
       <li
@@ -78,15 +97,32 @@ const totalPages = computed(() => Math.ceil(totalCount.value / props.productsPer
     </div>
     <div
       v-if="totalPages > 1"
-      class="flex justify-center mt-12"
+      class="flex justify-center w-full mt-12"
       data-testid="product-pagination"
     >
-      <UPagination
-        :total="totalCount"
-        :items-per-page="productsPerPage"
-        :default-page="page"
-        @update:page="(p: number) => emit('pageChange', p)"
-      />
+      <div class="flex gap-3 items-end">
+        <template
+          v-for="item in visiblePages"
+          :key="item"
+        >
+          <span
+            v-if="typeof item !== 'number'"
+            class="txt-xlarge-plus text-ui-fg-muted items-center cursor-default"
+          >
+            ...
+          </span>
+          <button
+            v-else
+            type="button"
+            class="txt-xlarge-plus text-ui-fg-muted"
+            :class="item === page ? 'text-ui-fg-base hover:text-ui-fg-subtle' : ''"
+            :disabled="item === page"
+            @click="emit('pageChange', item)"
+          >
+            {{ item }}
+          </button>
+        </template>
+      </div>
     </div>
   </div>
 </template>

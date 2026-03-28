@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getApiErrorMessage } from '~/utils/api-error'
+
 const { cart, applyPromotions } = useCart()
 
 const showInput = ref(false)
@@ -19,7 +21,7 @@ async function handleApply() {
     await applyPromotions([...appliedCodes.value, code.value.trim()])
     code.value = ''
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'Failed to apply promotion code'
+    error.value = getApiErrorMessage(e, 'Failed to apply promotion code')
   } finally {
     applying.value = false
   }
@@ -28,16 +30,17 @@ async function handleApply() {
 async function handleRemove(codeToRemove: string) {
   try {
     await applyPromotions(appliedCodes.value.filter(c => c !== codeToRemove))
-  } catch {
-    // Silently fail
+  } catch (e: unknown) {
+    error.value = getApiErrorMessage(e, 'Failed to remove promotion code')
   }
 }
 </script>
 
 <template>
-  <div>
+  <div class="w-full bg-white flex flex-col">
     <button
-      class="text-ui-fg-interactive text-small-semi flex items-center gap-x-1"
+      class="text-ui-fg-interactive txt-medium flex items-center gap-x-1 hover:text-ui-fg-interactive-hover"
+      data-testid="add-discount-button"
       @click="showInput = !showInput"
     >
       <UIcon
@@ -60,27 +63,29 @@ async function handleRemove(codeToRemove: string) {
         class="mt-3"
       >
         <form
-          class="flex items-center gap-x-2"
+          class="flex w-full gap-x-2"
           @submit.prevent="handleApply"
         >
-          <UInput
+          <input
             v-model="code"
+            type="text"
             placeholder="Enter code"
-            size="sm"
-            class="flex-1"
-          />
-          <UButton
-            type="submit"
-            size="sm"
-            variant="outline"
-            :loading="applying"
+            class="h-10 w-full rounded-md border border-ui-border-base px-3 text-sm text-ui-fg-base outline-hidden transition-colors placeholder:text-ui-fg-subtle focus:border-ui-fg-base"
+            data-testid="discount-input"
           >
-            Apply
-          </UButton>
+          <button
+            type="submit"
+            class="inline-flex h-10 items-center justify-center rounded-md border border-ui-border-base px-4 text-sm font-medium text-ui-fg-base transition-colors hover:bg-ui-bg-subtle disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="applying"
+            data-testid="discount-apply-button"
+          >
+            {{ applying ? 'Applying...' : 'Apply' }}
+          </button>
         </form>
         <p
           v-if="error"
           class="text-rose-500 text-small-regular mt-1"
+          data-testid="discount-error-message"
         >
           {{ error }}
         </p>
@@ -89,23 +94,32 @@ async function handleRemove(codeToRemove: string) {
 
     <div
       v-if="appliedCodes.length"
-      class="flex flex-wrap gap-2 mt-3"
+      class="mt-4 flex flex-col gap-y-2"
     >
-      <UBadge
+      <div
         v-for="c in appliedCodes"
         :key="c"
-        color="primary"
-        variant="subtle"
-        class="flex items-center gap-x-1"
+        class="flex items-center justify-between"
+        data-testid="discount-row"
       >
-        {{ c }}
-        <button @click="handleRemove(c)">
+        <span
+          class="truncate rounded-md bg-ui-bg-subtle px-2 py-1 text-xs font-medium text-ui-fg-base"
+          data-testid="discount-code"
+        >
+          {{ c }}
+        </span>
+        <button
+          class="flex items-center text-ui-fg-subtle hover:text-ui-fg-base"
+          data-testid="remove-discount-button"
+          @click="handleRemove(c)"
+        >
           <UIcon
-            name="lucide:x"
-            class="size-3"
+            name="lucide:trash-2"
+            class="size-4"
           />
+          <span class="sr-only">Remove discount code from order</span>
         </button>
-      </UBadge>
+      </div>
     </div>
   </div>
 </template>

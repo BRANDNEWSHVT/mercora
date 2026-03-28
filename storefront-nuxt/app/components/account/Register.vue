@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getApiErrorMessage } from '~/utils/api-error'
+
 const emit = defineEmits<{
   'switch-view': []
 }>()
@@ -28,7 +30,7 @@ async function handleSubmit() {
       phone: form.phone || undefined
     })
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'An error occurred during registration'
+    error.value = getApiErrorMessage(e, 'An error occurred during registration')
   } finally {
     loading.value = false
   }
@@ -105,7 +107,7 @@ async function handleSubmit() {
       </span>
       <UButton
         type="submit"
-        class="w-full mt-6"
+        class="w-full mt-6 text-center"
         size="lg"
         :loading="loading"
       >

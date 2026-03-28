@@ -21,20 +21,23 @@ const step = computed(() => getCheckoutStep(cart.value))
     v-if="cart"
     class="flex flex-col gap-y-4"
   >
-    <h2 class="text-[2rem] leading-11">
+    <h2 class="text-[2rem] leading-11 text-ui-fg-base">
       Summary
     </h2>
     <CheckoutDiscountCode />
     <CommonDivider />
     <CommonCartTotals :totals="cart" />
-    <NuxtLinkLocale :to="`/checkout?step=${step}`">
-      <UButton
-        block
-        size="lg"
+    <NuxtLinkLocale
+      :to="`/checkout?step=${step}`"
+      class="block"
+    >
+      <button
+        type="button"
+        class="flex h-10 w-full items-center justify-center rounded-md bg-black px-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
         data-testid="checkout-button"
       >
         Go to checkout
-      </UButton>
+      </button>
     </NuxtLinkLocale>
   </div>
 </template>

@@ -2,17 +2,14 @@
 const route = useRoute()
 const router = useRouter()
 
-const sortBy = ref((route.query.sortBy as string) || 'created_at')
-const page = ref(Number(route.query.page) || 1)
+const sortBy = computed(() => (route.query.sortBy as string) || 'created_at')
+const page = computed(() => Number(route.query.page) || 1)
 
 const setSort = (value: string) => {
-  sortBy.value = value
-  page.value = 1
   router.push({ query: { ...route.query, sortBy: value, page: '1' } })
 }
 
 const setPage = (p: number) => {
-  page.value = p
   router.push({ query: { ...route.query, page: String(p) } })
 }
 </script>
@@ -28,7 +25,9 @@ const setPage = (p: number) => {
     />
     <div class="flex-1">
       <div class="mb-8 text-2xl-semi">
-        <h1 data-testid="store-page-title">All products</h1>
+        <h1 data-testid="store-page-title">
+          All products
+        </h1>
       </div>
       <StorePaginatedProducts
         :sort-by="sortBy"

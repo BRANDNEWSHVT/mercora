@@ -1,4 +1,5 @@
 import type { HttpTypes } from '@medusajs/types'
+import { apiFetch } from '~/utils/api'
 
 export function useCustomer() {
   const customer = useState<HttpTypes.StoreCustomer | null>('customer', () => null)
@@ -7,7 +8,7 @@ export function useCustomer() {
   const fetchCustomer = async () => {
     loading.value = true
     try {
-      const data = await $fetch<HttpTypes.StoreCustomer | null>('/api/customer/me')
+      const data = await apiFetch<HttpTypes.StoreCustomer | null>('/api/customer/me')
       customer.value = data
     } catch {
       customer.value = null
@@ -18,7 +19,7 @@ export function useCustomer() {
   }
 
   const login = async (email: string, password: string) => {
-    await $fetch('/api/customer/login', {
+    await apiFetch('/api/customer/login', {
       method: 'POST',
       body: { email, password }
     })
@@ -32,7 +33,7 @@ export function useCustomer() {
     last_name: string
     phone?: string
   }) => {
-    await $fetch('/api/customer/register', {
+    await apiFetch('/api/customer/register', {
       method: 'POST',
       body: data
     })
@@ -40,13 +41,13 @@ export function useCustomer() {
   }
 
   const logout = async (countryCode: string) => {
-    await $fetch('/api/customer/logout', { method: 'POST' })
+    await apiFetch('/api/customer/logout', { method: 'POST' })
     customer.value = null
     navigateTo(`/${countryCode}/account`)
   }
 
-  const updateCustomer = async (body: any) => {
-    const updated = await $fetch('/api/customer/update', {
+  const updateCustomer = async (body: Record<string, unknown>) => {
+    const updated = await apiFetch('/api/customer/update', {
       method: 'POST',
       body
     })

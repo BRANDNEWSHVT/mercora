@@ -6,13 +6,19 @@
           Ecommerce Starter Template
         </h1>
         <h2 class="text-3xl leading-10 text-ui-fg-subtle font-normal">
-          Powered by Medusa and Nuxt
+          Powered by Medusa and Next.js
         </h2>
       </span>
-      <a href="https://github.com/medusajs/nextjs-starter-medusa" target="_blank">
-        <UButton variant="outline" size="lg">
+      <a
+        href="https://github.com/medusajs/nextjs-starter-medusa"
+        target="_blank"
+      >
+        <UButton variant="outline">
           View on GitHub
-          <UIcon name="i-simple-icons-github" class="w-4 h-4 ml-2" />
+          <UIcon
+            name="i-simple-icons-github"
+            class="w-4 h-4 ml-2"
+          />
         </UButton>
       </a>
     </div>
