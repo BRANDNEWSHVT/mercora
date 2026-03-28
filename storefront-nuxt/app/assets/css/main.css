@@ -1,0 +1,147 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --color-grey-0: #FFFFFF;
+  --color-grey-5: #F9FAFB;
+  --color-grey-10: #F3F4F6;
+  --color-grey-20: #E5E7EB;
+  --color-grey-30: #D1D5DB;
+  --color-grey-40: #9CA3AF;
+  --color-grey-50: #6B7280;
+  --color-grey-60: #4B5563;
+  --color-grey-70: #374151;
+  --color-grey-80: #1F2937;
+  --color-grey-90: #111827;
+}
+
+:root {
+  --ui-primary: black;
+  --color-ui-fg-base: #111827;
+  --color-ui-fg-subtle: #6B7280;
+  --color-ui-fg-muted: #9CA3AF;
+  --color-ui-fg-interactive: #4F46E5;
+  --color-ui-fg-on-color: #FFFFFF;
+  --color-ui-fg-disabled: #D1D5DB;
+  --color-ui-bg-subtle: #F9FAFB;
+  --color-ui-border-base: #E5E7EB;
+}
+
+.dark {
+  --ui-primary: white;
+}
+
+/* Scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Content container */
+.content-container {
+  max-width: 1440px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Typography utilities */
+.txt-compact-small { font-size: 0.75rem; line-height: 1.25rem; }
+.txt-compact-medium { font-size: 0.875rem; line-height: 1.25rem; }
+.txt-compact-xlarge-plus { font-size: 1.125rem; line-height: 1.5rem; font-weight: 500; }
+.txt-medium { font-size: 0.875rem; line-height: 1.5rem; }
+.txt-medium-plus { font-size: 0.875rem; line-height: 1.5rem; font-weight: 500; }
+.txt-small { font-size: 0.75rem; line-height: 1.25rem; }
+.txt-small-plus { font-size: 0.75rem; line-height: 1.25rem; font-weight: 500; }
+.txt-xlarge { font-size: 1.25rem; line-height: 1.75rem; }
+.txt-xlarge-plus { font-size: 1.25rem; line-height: 1.75rem; font-weight: 500; }
+.txt-xsmall-plus { font-size: 0.625rem; line-height: 1rem; font-weight: 500; }
+
+.text-xsmall-regular { font-size: 0.625rem; line-height: 1rem; font-weight: 400; }
+.text-small-regular { font-size: 0.75rem; line-height: 1.25rem; font-weight: 400; }
+.text-small-semi { font-size: 0.75rem; line-height: 1.25rem; font-weight: 600; }
+.text-base-regular { font-size: 0.875rem; line-height: 1.5rem; font-weight: 400; }
+.text-base-semi { font-size: 0.875rem; line-height: 1.5rem; font-weight: 600; }
+.text-base-large { font-size: 1rem; line-height: 1.5rem; font-weight: 400; }
+.text-large-regular { font-size: 1rem; line-height: 1.5rem; font-weight: 400; }
+.text-large-semi { font-size: 1rem; line-height: 1.5rem; font-weight: 600; }
+.text-xl-regular { font-size: 1.5rem; line-height: 2.25rem; font-weight: 400; }
+.text-xl-semi { font-size: 1.5rem; line-height: 2.25rem; font-weight: 600; }
+.text-2xl-regular { font-size: 1.875rem; line-height: 3rem; font-weight: 400; }
+.text-2xl-semi { font-size: 1.875rem; line-height: 3rem; font-weight: 600; }
+.text-3xl-regular { font-size: 2rem; line-height: 2.75rem; font-weight: 400; }
+.text-3xl-semi { font-size: 2rem; line-height: 2.75rem; font-weight: 600; }
+
+/* Color utilities matching @medusajs/ui */
+.text-ui-fg-base { color: var(--color-ui-fg-base); }
+.text-ui-fg-subtle { color: var(--color-ui-fg-subtle); }
+.text-ui-fg-muted { color: var(--color-ui-fg-muted); }
+.text-ui-fg-interactive { color: var(--color-ui-fg-interactive); }
+.text-ui-fg-on-color { color: var(--color-ui-fg-on-color); }
+.text-ui-fg-disabled { color: var(--color-ui-fg-disabled); }
+.bg-ui-bg-subtle { background-color: var(--color-ui-bg-subtle); }
+.border-ui-border-base { border-color: var(--color-ui-border-base); }
+
+/* Elevation */
+.shadow-elevation-card-rest {
+  box-shadow: 0px 2px 4px 0px rgba(3, 7, 18, 0.04), 0px 1px 2px -1px rgba(3, 7, 18, 0.08), 0px 0px 0px 1px rgba(3, 7, 18, 0.08);
+}
+.shadow-elevation-card-hover {
+  box-shadow: 0px 2px 8px 0px rgba(3, 7, 18, 0.08), 0px 1px 4px -1px rgba(3, 7, 18, 0.12), 0px 0px 0px 1px rgba(3, 7, 18, 0.08);
+}
+
+/* Input floating label */
+input:focus ~ label,
+input:not(:placeholder-shown) ~ label {
+  transform: translateY(-0.5rem);
+  font-size: 0.625rem;
+  line-height: 1rem;
+}
+
+input:focus ~ label {
+  left: 0;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: 1px solid #212121;
+  -webkit-text-fill-color: #212121;
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+/* Rounded utilities from medusa */
+.rounded-rounded { border-radius: 0.5rem; }
+.rounded-large { border-radius: 1rem; }
+.rounded-soft { border-radius: 2px; }
+
+/* Custom breakpoints matching Next.js storefront config */
+@custom-variant small (@media (min-width: 1024px));
+@custom-variant medium (@media (min-width: 1280px));
+@custom-variant xsmall (@media (min-width: 512px));
+@custom-variant large (@media (min-width: 1440px));
+@custom-variant xlarge (@media (min-width: 1680px));
+@custom-variant 2xlarge (@media (min-width: 1920px));
