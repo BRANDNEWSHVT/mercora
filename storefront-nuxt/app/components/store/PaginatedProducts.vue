@@ -1,14 +1,20 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+import { sortProducts } from '~/utils/sort-products'
+import type { SortOptions } from '~/types'
+
 const props = withDefaults(defineProps<{
-  sortBy?: string
+  sortBy?: SortOptions
   page?: number
   collectionId?: string
   categoryId?: string
   productsPerPage?: number
+  skeletonCount?: number
 }>(), {
   sortBy: 'created_at',
   page: 1,
-  productsPerPage: 12
+  productsPerPage: 12,
+  skeletonCount: 8
 })
 
 const emit = defineEmits<{
@@ -18,6 +24,9 @@ const emit = defineEmits<{
 const route = useRoute()
 const countryCode = computed(() => route.params.countryCode as string)
 const { getRegion } = useRegion()
+const skeletonItems = computed(() =>
+  Array.from({ length: props.skeletonCount }, (_, index) => index)
+)
 
 const queryKey = computed(() => {
   return `products-${props.sortBy}-${props.page}-${props.collectionId || ''}-${props.categoryId || ''}-${countryCode.value}`
@@ -25,35 +34,36 @@ const queryKey = computed(() => {
 
 const { data, pending } = useAsyncData(
   queryKey,
-  async () => {
+  async (): Promise<{ products: HttpTypes.StoreProduct[], count: number }> => {
     const region = await getRegion(countryCode.value)
     if (!region) return { products: [], count: 0 }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query: Record<string, any> = {
+    const query: Record<string, string | number> = {
       region_id: region.id,
       fields: '*variants.calculated_price',
-      limit: props.productsPerPage,
-      offset: (props.page - 1) * props.productsPerPage,
-      order: props.sortBy === 'price_asc'
-        ? 'variants.calculated_price'
-        : props.sortBy === 'price_desc'
-          ? '-variants.calculated_price'
-          : '-created_at'
+      limit: 100,
+      offset: 0
     }
 
     if (props.collectionId) query.collection_id = props.collectionId
     if (props.categoryId) query.category_id = props.categoryId
+    if (props.sortBy === 'created_at') query.order = 'created_at'
 
-    return await $fetch('/api/products', { query })
+    const response = await $fetch<{ products: HttpTypes.StoreProduct[], count: number }>('/api/products', { query })
+    const sortedProducts = sortProducts(response.products ?? [], props.sortBy)
+    const start = (props.page - 1) * props.productsPerPage
+    const end = start + props.productsPerPage
+
+    return {
+      products: sortedProducts.slice(start, end),
+      count: response.count ?? 0
+    }
   },
   { watch: [queryKey] }
 )
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const products = computed(() => (data.value as any)?.products ?? [])
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const totalCount = computed(() => (data.value as any)?.count ?? 0)
+const products = computed(() => data.value?.products ?? [])
+const totalCount = computed(() => data.value?.count ?? 0)
 const totalPages = computed(() => Math.ceil(totalCount.value / props.productsPerPage))
 
 const visiblePages = computed(() => {
@@ -79,6 +89,25 @@ const visiblePages = computed(() => {
 <template>
   <div>
     <ul
+      v-if="pending"
+      class="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8 flex-1"
+      data-testid="products-list-loader"
+    >
+      <li
+        v-for="item in skeletonItems"
+        :key="item"
+      >
+        <div class="flex flex-col gap-y-4">
+          <div class="aspect-[11/14] w-full rounded-md bg-ui-bg-subtle animate-pulse" />
+          <div class="space-y-2">
+            <div class="h-4 w-3/4 rounded bg-ui-bg-subtle animate-pulse" />
+            <div class="h-4 w-1/3 rounded bg-ui-bg-subtle animate-pulse" />
+          </div>
+        </div>
+      </li>
+    </ul>
+    <ul
+      v-else
       class="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
       data-testid="products-list"
     >

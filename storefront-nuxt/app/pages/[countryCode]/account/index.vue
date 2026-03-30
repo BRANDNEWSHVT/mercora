@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Account | Medusa Store',
-  description: 'Overview of your account activity.',
+  title: 'Account',
+  description: 'Overview of your account activity.'
 })
 </script>
 

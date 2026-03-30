@@ -1,37 +1,50 @@
 <script setup lang="ts">
 import type { HttpTypes } from '@medusajs/types'
 
-defineProps<{
+const props = defineProps<{
   customer: HttpTypes.StoreCustomer
 }>()
 
+const email = ref(props.customer.email || '')
 const isSuccess = ref(false)
 const isError = ref(false)
+const errorMessage = ref('')
+
+watch(() => props.customer, (customer) => {
+  email.value = customer.email || ''
+})
+
+function handleSave() {
+  isSuccess.value = true
+  isError.value = false
+  errorMessage.value = ''
+}
 
 function clearState() {
   isSuccess.value = false
   isError.value = false
+  errorMessage.value = ''
+  email.value = props.customer.email || ''
 }
 </script>
 
 <template>
   <AccountInfo
     label="Email"
-    :current-info="customer.email || 'Add your email'"
+    :current-info="`${props.customer.email}`"
     :is-success="isSuccess"
     :is-error="isError"
-    error-message="Email update is not currently supported"
-    @save="isError = true"
+    :error-message="errorMessage"
+    data-testid="account-email-editor"
+    @save="handleSave"
     @clear-state="clearState"
   >
     <UInput
-      :model-value="customer.email"
+      v-model="email"
       type="email"
       placeholder="Email"
-      disabled
+      required
+      data-testid="email-input"
     />
-    <p class="text-small-regular text-ui-fg-subtle">
-      Email address cannot be changed at this time.
-    </p>
   </AccountInfo>
 </template>

@@ -29,6 +29,7 @@ const form = reactive({
 })
 
 const countries = computed(() => props.region?.countries ?? [])
+const addresses = computed(() => props.customer.addresses ?? [])
 
 function resetForm() {
   form.first_name = ''
@@ -69,8 +70,12 @@ function openEdit(address: HttpTypes.StoreCustomerAddress) {
 async function handleSave() {
   saving.value = true
   error.value = ''
+
   try {
-    const address = { ...form }
+    const address = {
+      ...form,
+      is_default_shipping: !editingAddress.value && addresses.value.length === 0
+    }
 
     if (editingAddress.value) {
       await apiFetch('/api/customer/address', {
@@ -105,95 +110,97 @@ async function handleDelete(addressId: string) {
 }
 
 function formatAddress(address: HttpTypes.StoreCustomerAddress) {
-  const parts = [
-    address.address_1,
-    address.address_2,
-    [address.city, address.province, address.postal_code].filter(Boolean).join(', '),
-    address.country_code?.toUpperCase()
-  ]
-  return parts.filter(Boolean).join(', ')
+  return [address.address_1, address.address_2].filter(Boolean).join(', ')
 }
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl-semi">
-        Shipping Addresses
-      </h2>
-      <UButton
-        size="sm"
-        @click="openAdd"
-      >
-        <UIcon
-          name="lucide:plus"
-          class="size-4 mr-1"
-        />
-        Add address
-      </UButton>
-    </div>
-
-    <div
-      v-if="customer.addresses?.length"
-      class="grid grid-cols-1 small:grid-cols-2 gap-4"
-    >
+  <div class="w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 mt-4">
       <div
-        v-for="address in customer.addresses"
-        :key="address.id"
-        class="border border-gray-200 rounded-lg p-5 flex flex-col gap-y-2"
+        class="border border-ui-border-base rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between"
       >
-        <div class="flex items-start justify-between">
-          <p class="text-base-semi">
+        <button
+          class="h-full w-full flex flex-col justify-between text-left"
+          data-testid="add-address-button"
+          @click="openAdd"
+        >
+          <span class="text-base-semi">New address</span>
+          <UIcon
+            name="i-lucide-plus"
+            class="size-5"
+          />
+        </button>
+      </div>
+
+      <div
+        v-for="address in addresses"
+        :key="address.id"
+        class="border rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors"
+        data-testid="address-container"
+      >
+        <div class="flex flex-col">
+          <p
+            class="text-left text-base-semi"
+            data-testid="address-name"
+          >
             {{ address.first_name }} {{ address.last_name }}
           </p>
+          <p
+            v-if="address.company"
+            class="txt-compact-small text-ui-fg-base"
+            data-testid="address-company"
+          >
+            {{ address.company }}
+          </p>
+          <p class="flex flex-col text-left text-base-regular mt-2">
+            <span data-testid="address-address">
+              {{ formatAddress(address) }}
+            </span>
+            <span data-testid="address-postal-city">
+              {{ address.postal_code }}, {{ address.city }}
+            </span>
+            <span data-testid="address-province-country">
+              {{ address.province ? `${address.province}, ` : '' }}{{ address.country_code?.toUpperCase() }}
+            </span>
+          </p>
         </div>
-        <p
-          v-if="address.company"
-          class="text-small-regular text-ui-fg-subtle"
-        >
-          {{ address.company }}
-        </p>
-        <p class="text-small-regular text-ui-fg-subtle">
-          {{ formatAddress(address) }}
-        </p>
-        <p
-          v-if="address.phone"
-          class="text-small-regular text-ui-fg-subtle"
-        >
-          {{ address.phone }}
-        </p>
-        <div class="flex items-center gap-x-2 mt-2">
-          <UButton
-            variant="outline"
-            size="xs"
+        <div class="flex items-center gap-x-4">
+          <button
+            class="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            data-testid="address-edit-button"
             @click="openEdit(address)"
           >
+            <UIcon
+              name="i-lucide-pencil"
+              class="size-4"
+            />
             Edit
-          </UButton>
-          <UButton
-            variant="outline"
-            color="error"
-            size="xs"
+          </button>
+          <button
+            class="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            data-testid="address-delete-button"
             @click="handleDelete(address.id)"
           >
-            Delete
-          </UButton>
+            <UIcon
+              name="i-lucide-trash-2"
+              class="size-4"
+            />
+            Remove
+          </button>
         </div>
       </div>
     </div>
-    <p
-      v-else
-      class="text-base-regular text-ui-fg-subtle"
-    >
-      No saved addresses.
-    </p>
 
     <ClientOnly>
       <UModal v-model:open="showModal">
         <template #content>
-          <div class="p-6">
+          <div
+            class="p-6"
+            :data-testid="editingAddress ? 'edit-address-modal' : 'add-address-modal'"
+          >
             <h3 class="text-large-semi mb-4">
-              {{ editingAddress ? 'Edit address' : 'Add new address' }}
+              {{ editingAddress ? 'Edit address' : 'Add address' }}
             </h3>
             <form
               class="flex flex-col gap-y-3"
@@ -204,46 +211,64 @@ function formatAddress(address: HttpTypes.StoreCustomerAddress) {
                   v-model="form.first_name"
                   placeholder="First name"
                   required
+                  autocomplete="given-name"
+                  data-testid="first-name-input"
                 />
                 <UInput
                   v-model="form.last_name"
                   placeholder="Last name"
                   required
+                  autocomplete="family-name"
+                  data-testid="last-name-input"
                 />
               </div>
               <UInput
                 v-model="form.company"
-                placeholder="Company (optional)"
+                placeholder="Company"
+                autocomplete="organization"
+                data-testid="company-input"
               />
               <UInput
                 v-model="form.address_1"
                 placeholder="Address"
                 required
+                autocomplete="address-line1"
+                data-testid="address-1-input"
               />
               <UInput
                 v-model="form.address_2"
-                placeholder="Apartment, suite, etc. (optional)"
+                placeholder="Apartment, suite, etc."
+                autocomplete="address-line2"
+                data-testid="address-2-input"
               />
               <div class="grid grid-cols-2 gap-3">
                 <UInput
                   v-model="form.postal_code"
                   placeholder="Postal code"
                   required
+                  autocomplete="postal-code"
+                  data-testid="postal-code-input"
                 />
                 <UInput
                   v-model="form.city"
                   placeholder="City"
                   required
+                  autocomplete="locality"
+                  data-testid="city-input"
                 />
               </div>
               <UInput
                 v-model="form.province"
-                placeholder="State / Province"
+                placeholder="Province / State"
+                autocomplete="address-level1"
+                data-testid="state-input"
               />
               <select
                 v-model="form.country_code"
                 class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                 required
+                autocomplete="country"
+                data-testid="country-select"
               >
                 <option
                   value=""
@@ -261,18 +286,22 @@ function formatAddress(address: HttpTypes.StoreCustomerAddress) {
               </select>
               <UInput
                 v-model="form.phone"
-                type="tel"
-                placeholder="Phone (optional)"
+                placeholder="Phone"
+                autocomplete="tel"
+                data-testid="phone-input"
               />
               <p
                 v-if="error"
                 class="text-rose-500 text-small-regular"
+                data-testid="address-error"
               >
                 {{ error }}
               </p>
               <div class="flex justify-end gap-x-2 mt-4">
                 <UButton
+                  type="button"
                   variant="outline"
+                  data-testid="cancel-button"
                   @click="showModal = false"
                 >
                   Cancel
@@ -280,6 +309,7 @@ function formatAddress(address: HttpTypes.StoreCustomerAddress) {
                 <UButton
                   type="submit"
                   :loading="saving"
+                  data-testid="save-button"
                 >
                   Save
                 </UButton>

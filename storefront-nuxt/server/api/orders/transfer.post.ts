@@ -1,9 +1,27 @@
 export default defineEventHandler(async (event) => {
   const sdk = useMedusaSdk()
   const headers = getAuthHeaders(event)
-  const body = await readBody(event)
+  const body = await readBody<{
+    id?: string
+    token?: string
+    action?: 'accept' | 'decline'
+    order_id?: string
+  }>(event)
 
   const { id, token, action } = body
+
+  if (body.order_id) {
+    const { order } = await sdk.store.order.requestTransfer(
+      body.order_id,
+      {},
+      {
+        fields: 'id,email'
+      },
+      headers
+    )
+
+    return order
+  }
 
   if (action === 'accept') {
     await sdk.client.fetch(`/store/orders/${id}/transfer/accept`, {

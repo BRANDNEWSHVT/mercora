@@ -20,8 +20,7 @@ watch(() => props.customer, (c) => {
 })
 
 const currentInfo = computed(() => {
-  const name = `${props.customer.first_name || ''} ${props.customer.last_name || ''}`.trim()
-  return name || 'Add your name'
+  return `${props.customer.first_name || ''} ${props.customer.last_name || ''}`.trim()
 })
 
 async function handleSave() {
@@ -52,19 +51,22 @@ function clearState() {
     :is-success="isSuccess"
     :is-error="isError"
     :error-message="errorMessage"
+    data-testid="account-name-editor"
     @save="handleSave"
     @clear-state="clearState"
   >
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-2 gap-x-4">
       <UInput
         v-model="firstName"
         placeholder="First name"
         required
+        data-testid="first-name-input"
       />
       <UInput
         v-model="lastName"
         placeholder="Last name"
         required
+        data-testid="last-name-input"
       />
     </div>
   </AccountInfo>

@@ -1,27 +1,20 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
 import { getApiErrorMessage } from '~/utils/api-error'
 
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  item: any
+  item: HttpTypes.StoreCartLineItem
   currencyCode: string
   type?: 'full' | 'preview'
 }>()
 
-const route = useRoute()
-const countryCode = computed(() => route.params.countryCode as string)
 const { updateLineItem } = useCart()
 
-const maxQuantity = computed(() => {
-  if (props.item.variant?.manage_inventory) {
-    return props.item.variant.inventory_quantity ?? 10
-  }
-  return 10
-})
+const maxQuantity = 10
 
 const quantityOptions = computed(() => {
   const currentQuantity = Number(props.item.quantity) || 1
-  const optionCount = Math.max(1, Math.min(10, maxQuantity.value), currentQuantity)
+  const optionCount = Math.max(1, Math.min(maxQuantity, 10), currentQuantity)
 
   return Array.from({ length: optionCount }, (_, index) => index + 1)
 })
@@ -58,8 +51,8 @@ const handleQuantityChange = async (qty: number) => {
     data-testid="product-row"
   >
     <td class="pl-0! w-24 py-5 pr-4 align-middle">
-      <NuxtLink
-        :to="`/${countryCode}/products/${item.product_handle}`"
+      <NuxtLinkLocale
+        :to="`/products/${item.product_handle}`"
         :class="['flex', type === 'preview' ? 'w-16' : 'small:w-24 w-12']"
       >
         <ProductThumbnail
@@ -67,7 +60,7 @@ const handleQuantityChange = async (qty: number) => {
           :images="item.variant?.product?.images"
           size="square"
         />
-      </NuxtLink>
+      </NuxtLinkLocale>
     </td>
 
     <td class="py-5 pr-4 text-left align-middle">

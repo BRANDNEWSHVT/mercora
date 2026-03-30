@@ -58,12 +58,14 @@ async function handleSubmit() {
             class="w-full"
             placeholder="Order ID"
             size="lg"
+            data-testid="order-id-input"
           />
           <UButton
             type="submit"
             variant="outline"
             class="w-fit whitespace-nowrap self-end"
             :loading="loading"
+            data-testid="transfer-request-button"
           >
             Request transfer
           </UButton>
@@ -97,6 +99,7 @@ async function handleSubmit() {
         </div>
       </div>
       <button
+        type="button"
         class="h-fit p-1 hover:bg-neutral-100 rounded"
         @click="showSuccess = false"
       >

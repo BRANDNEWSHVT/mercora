@@ -1,18 +1,19 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+import type { SortOptions } from '~/types'
+
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  category: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  categories?: any[]
+  category: HttpTypes.StoreProductCategory
+  skeletonCount?: number
 }>()
 
 const route = useRoute()
 const router = useRouter()
 
-const sortBy = computed(() => (route.query.sortBy as string) || 'created_at')
+const sortBy = computed<SortOptions>(() => (route.query.sortBy as SortOptions) || 'created_at')
 const page = computed(() => Number(route.query.page) || 1)
 
-const setSort = (value: string) => {
+const setSort = (value: SortOptions) => {
   router.push({ query: { ...route.query, sortBy: value, page: '1' } })
 }
 
@@ -21,7 +22,7 @@ const setPage = (p: number) => {
 }
 
 const parents = computed(() => {
-  const items = []
+  const items: HttpTypes.StoreProductCategory[] = []
   let current = props.category?.parent_category
 
   while (current) {
@@ -87,6 +88,7 @@ const parents = computed(() => {
         :sort-by="sortBy"
         :page="page"
         :category-id="category.id"
+        :skeleton-count="skeletonCount || 8"
         @page-change="setPage"
       />
     </div>

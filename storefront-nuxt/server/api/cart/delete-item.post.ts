@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 
   if (!cartId) throw createError({ statusCode: 400, message: 'No cart found' })
 
-  await sdk.store.cart.deleteLineItem(cartId, body.line_id, headers)
+  await sdk.store.cart.deleteLineItem(cartId, body.line_id, {}, headers)
 
   return { success: true }
 })

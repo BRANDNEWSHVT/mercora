@@ -8,17 +8,8 @@ const errorMessage = ref('')
 
 function handleSave() {
   isSuccess.value = false
-  isError.value = false
-
-  if (newPassword.value !== confirmPassword.value) {
-    isError.value = true
-    errorMessage.value = 'New passwords do not match'
-    return
-  }
-
-  // Password update not yet implemented in the Medusa store API
   isError.value = true
-  errorMessage.value = 'Password update is not currently supported'
+  errorMessage.value = 'Password update is not implemented'
 }
 
 function clearState() {
@@ -38,27 +29,31 @@ function clearState() {
     :is-success="isSuccess"
     :is-error="isError"
     :error-message="errorMessage"
+    data-testid="account-password-editor"
     @save="handleSave"
     @clear-state="clearState"
   >
-    <div class="flex flex-col gap-y-4">
+    <div class="grid grid-cols-2 gap-4">
       <UInput
         v-model="oldPassword"
         type="password"
         placeholder="Old password"
         required
+        data-testid="old-password-input"
       />
       <UInput
         v-model="newPassword"
         type="password"
         placeholder="New password"
         required
+        data-testid="new-password-input"
       />
       <UInput
         v-model="confirmPassword"
         type="password"
         placeholder="Confirm password"
         required
+        data-testid="confirm-password-input"
       />
     </div>
   </AccountInfo>

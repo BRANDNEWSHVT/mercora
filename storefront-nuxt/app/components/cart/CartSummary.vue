@@ -18,7 +18,7 @@ const step = computed(() => getCheckoutStep(cart.value))
 
 <template>
   <div
-    v-if="cart"
+    v-if="cart && cart.region"
     class="flex flex-col gap-y-4"
   >
     <h2 class="text-[2rem] leading-11 text-ui-fg-base">

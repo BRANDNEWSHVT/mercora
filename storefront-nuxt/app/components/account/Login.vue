@@ -26,7 +26,10 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="max-w-sm w-full flex flex-col items-center">
+  <div
+    class="max-w-sm w-full flex flex-col items-center"
+    data-testid="login-page"
+  >
     <h1 class="text-large-semi uppercase mb-6">
       Welcome back
     </h1>
@@ -37,13 +40,14 @@ async function handleSubmit() {
       class="w-full"
       @submit.prevent="handleSubmit"
     >
-      <div class="flex flex-col gap-y-4 w-full">
+      <div class="flex flex-col gap-y-2 w-full">
         <UInput
           v-model="email"
           type="email"
           placeholder="Email"
           required
           size="lg"
+          data-testid="email-input"
         />
         <UInput
           v-model="password"
@@ -51,11 +55,13 @@ async function handleSubmit() {
           placeholder="Password"
           required
           size="lg"
+          data-testid="password-input"
         />
       </div>
       <p
         v-if="error"
         class="text-rose-500 text-small-regular mt-2"
+        data-testid="login-error-message"
       >
         {{ error }}
       </p>
@@ -64,18 +70,21 @@ async function handleSubmit() {
         class="w-full mt-6 text-center"
         size="lg"
         :loading="loading"
+        data-testid="sign-in-button"
       >
         Sign in
       </UButton>
     </form>
     <span class="text-center text-ui-fg-base text-small-regular mt-6">
-      Not a member?
+      Not a member?{{ ' ' }}
       <button
+        type="button"
         class="underline"
+        data-testid="register-button"
         @click="emit('switch-view')"
       >
         Join us
-      </button>
+      </button>.
     </span>
   </div>
 </template>

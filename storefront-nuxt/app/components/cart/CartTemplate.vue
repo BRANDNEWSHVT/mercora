@@ -22,7 +22,10 @@ const { customer } = useCustomer()
             />
           </div>
           <div class="relative">
-            <div class="flex flex-col gap-y-8 sticky top-12">
+            <div
+              v-if="cart.region"
+              class="flex flex-col gap-y-8 sticky top-12"
+            >
               <div class="bg-white py-6">
                 <CartSummary />
               </div>

@@ -1,16 +1,18 @@
 <script setup lang="ts">
-defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  collection: any
+import type { HttpTypes } from '@medusajs/types'
+import type { SortOptions } from '~/types'
+
+const props = defineProps<{
+  collection: HttpTypes.StoreCollection
 }>()
 
 const route = useRoute()
 const router = useRouter()
 
-const sortBy = computed(() => (route.query.sortBy as string) || 'created_at')
+const sortBy = computed<SortOptions>(() => (route.query.sortBy as SortOptions) || 'created_at')
 const page = computed(() => Number(route.query.page) || 1)
 
-const setSort = (value: string) => {
+const setSort = (value: SortOptions) => {
   router.push({ query: { ...route.query, sortBy: value, page: '1' } })
 }
 
@@ -37,6 +39,7 @@ const setPage = (p: number) => {
         :sort-by="sortBy"
         :page="page"
         :collection-id="collection.id"
+        :skeleton-count="props.collection.products?.length || 8"
         @page-change="setPage"
       />
     </div>

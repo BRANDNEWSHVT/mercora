@@ -6,7 +6,8 @@ const route = useRoute()
 const orderId = computed(() => route.params.id as string)
 const token = computed(() => route.params.token as string)
 
-const result = ref<{ success: boolean, error?: string }>({ success: false })
+const pending = ref(true)
+const result = ref<{ success: boolean, error?: string } | null>(null)
 
 const getErrorMessage = (error: unknown) => {
   return (error as FetchError)?.data?.message
@@ -27,6 +28,8 @@ onMounted(async () => {
     result.value = { success: true }
   } catch (error: unknown) {
     result.value = { success: false, error: getErrorMessage(error) }
+  } finally {
+    pending.value = false
   }
 })
 </script>
@@ -35,12 +38,20 @@ onMounted(async () => {
   <div class="flex flex-col gap-y-4 items-start w-2/5 mx-auto mt-10 mb-20">
     <OrderTransferImage />
     <div class="flex flex-col gap-y-6">
-      <template v-if="result.success">
+      <template v-if="pending">
+        <div class="flex items-center justify-center py-10">
+          <UIcon
+            name="i-lucide-loader-2"
+            class="animate-spin w-8 h-8"
+          />
+        </div>
+      </template>
+      <template v-else-if="result?.success">
         <h1 class="text-xl text-zinc-900">
-          Order transferred!
+          Order transfered!
         </h1>
         <p class="text-zinc-600">
-          Order {{ orderId }} has been successfully transferred to the new owner.
+          Order {{ orderId }} has been successfully transfered to the new owner.
         </p>
       </template>
       <template v-else>
@@ -48,7 +59,7 @@ onMounted(async () => {
           There was an error accepting the transfer. Please try again.
         </p>
         <p
-          v-if="result.error"
+          v-if="result?.error"
           class="text-red-500"
         >
           Error message: {{ result.error }}

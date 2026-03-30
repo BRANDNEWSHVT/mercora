@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 const route = useRoute()
 const countryCode = computed(() => route.params.countryCode as string)
 const { getRegion } = useRegion()
 
 useSeoMeta({
-  title: 'Medusa Store',
-  description: 'A performant frontend ecommerce storefront with Nuxt and Medusa.',
+  title: 'Medusa Next.js Starter Template',
+  description: 'A performant frontend ecommerce starter template with Next.js 15 and Medusa.'
 })
 
 const { data: collections } = await useAsyncData('home-collections', () =>
-  $fetch('/api/collections', { query: { fields: 'id,handle,title' } })
+  $fetch<HttpTypes.StoreCollection[]>('/api/collections', { query: { fields: 'id,handle,title' } })
 )
 
 const { data: region } = await useAsyncData(

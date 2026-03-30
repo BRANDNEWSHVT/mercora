@@ -1,9 +1,12 @@
 <script setup lang="ts">
-const { customer, updateCustomer } = useCustomer()
+import type { HttpTypes } from '@medusajs/types'
+import { getApiErrorMessage } from '~/utils/api-error'
+
+const { customer, fetchCustomer } = useCustomer()
 const { regions } = useRegion()
 
 const billingAddress = computed(() =>
-  customer.value?.addresses?.find((addr: any) => addr.is_default_billing)
+  customer.value?.addresses?.find(addr => addr.is_default_billing)
 )
 
 const firstName = ref('')
@@ -17,17 +20,33 @@ const province = ref('')
 const countryCode = ref('')
 const phone = ref('')
 
-const regionOptions = computed(() => {
-  return (
-    regions.value
-      ?.map((region: any) =>
-        region.countries?.map((country: any) => ({
-          value: country.iso_2,
-          label: country.display_name,
-        }))
-      )
-      .flat() || []
+type RegionOption = {
+  value: string
+  label: string
+}
+
+const regionOptions = computed<RegionOption[]>(() => {
+  const regionList = (regions.value as HttpTypes.StoreRegion[] | null) ?? []
+
+  return regionList.flatMap(region =>
+    (region.countries ?? [])
+      .filter(country => country.iso_2 && country.display_name)
+      .map(country => ({
+        value: country.iso_2 as string,
+        label: country.display_name as string
+      }))
   )
+})
+
+const billingCountryLabel = computed(() => {
+  const address = billingAddress.value
+  if (!address) {
+    return ''
+  }
+
+  return regionOptions.value.find(country => country.value === address.country_code)?.label
+    || address.country_code?.toUpperCase()
+    || ''
 })
 
 watch(billingAddress, (addr) => {
@@ -42,28 +61,32 @@ watch(billingAddress, (addr) => {
     province.value = addr.province || ''
     countryCode.value = addr.country_code || ''
     phone.value = addr.phone || ''
+    return
   }
-}, { immediate: true })
 
-const currentInfo = computed(() => {
-  if (!billingAddress.value) return 'No billing address'
-  const addr = billingAddress.value
-  const country = regionOptions.value?.find(
-    (c: any) => c.value === addr.country_code
-  )?.label || addr.country_code?.toUpperCase()
-  return `${addr.first_name} ${addr.last_name}, ${addr.address_1}, ${addr.postal_code} ${addr.city}, ${country}`
-})
+  firstName.value = ''
+  lastName.value = ''
+  company.value = ''
+  address1.value = ''
+  address2.value = ''
+  postalCode.value = ''
+  city.value = ''
+  province.value = ''
+  countryCode.value = ''
+  phone.value = ''
+}, { immediate: true })
 
 const isSuccess = ref(false)
 const isError = ref(false)
-const loading = ref(false)
+const errorMessage = ref('')
 
 async function handleSave() {
-  loading.value = true
   isError.value = false
   isSuccess.value = false
+  errorMessage.value = ''
+
   try {
-    const body: Record<string, any> = {
+    const address = {
       first_name: firstName.value,
       last_name: lastName.value,
       company: company.value,
@@ -75,7 +98,10 @@ async function handleSave() {
       country_code: countryCode.value,
       phone: phone.value,
       is_default_billing: true,
-    }
+      is_default_shipping: false
+    } as Record<string, unknown>
+
+    const body: Record<string, unknown> = { address }
 
     if (billingAddress.value?.id) {
       body.addressId = billingAddress.value.id
@@ -86,32 +112,76 @@ async function handleSave() {
 
     await $fetch('/api/customer/address', {
       method: 'POST',
-      body,
+      body
     })
+
+    await fetchCustomer()
     isSuccess.value = true
-  } catch {
+  } catch (error: unknown) {
     isError.value = true
-  } finally {
-    loading.value = false
+    errorMessage.value = getApiErrorMessage(error, 'Failed to update billing address')
   }
 }
 
 function clearState() {
   isSuccess.value = false
   isError.value = false
+  errorMessage.value = ''
+
+  const addr = billingAddress.value
+  firstName.value = addr?.first_name || ''
+  lastName.value = addr?.last_name || ''
+  company.value = addr?.company || ''
+  address1.value = addr?.address_1 || ''
+  address2.value = addr?.address_2 || ''
+  postalCode.value = addr?.postal_code || ''
+  city.value = addr?.city || ''
+  province.value = addr?.province || ''
+  countryCode.value = addr?.country_code || ''
+  phone.value = addr?.phone || ''
 }
 </script>
 
 <template>
-  <AccountAccountInfo
+  <AccountInfo
     label="Billing address"
-    :current-info="currentInfo"
+    current-info=""
     :is-success="isSuccess"
     :is-error="isError"
+    :error-message="errorMessage"
     data-testid="account-billing-address-editor"
     @save="handleSave"
     @clear-state="clearState"
   >
+    <template #current-info>
+      <div
+        v-if="billingAddress"
+        class="flex flex-col font-semibold"
+        data-testid="current-info"
+      >
+        <span>
+          {{ billingAddress.first_name }} {{ billingAddress.last_name }}
+        </span>
+        <span>{{ billingAddress.company }}</span>
+        <span>
+          {{ billingAddress.address_1 }}<span v-if="billingAddress.address_2">, {{ billingAddress.address_2 }}</span>
+        </span>
+        <span>
+          {{ billingAddress.postal_code }}, {{ billingAddress.city }}
+        </span>
+        <span>
+          {{ billingCountryLabel }}
+        </span>
+      </div>
+      <span
+        v-else
+        class="font-semibold"
+        data-testid="current-info"
+      >
+        No billing address
+      </span>
+    </template>
+
     <div class="grid grid-cols-1 gap-y-2">
       <div class="grid grid-cols-2 gap-x-2">
         <UInput
@@ -187,6 +257,12 @@ function clearState() {
           {{ option.label }}
         </option>
       </select>
+      <UInput
+        v-model="phone"
+        placeholder="Phone"
+        size="lg"
+        data-testid="billing-phone-input"
+      />
     </div>
-  </AccountAccountInfo>
+  </AccountInfo>
 </template>

@@ -17,12 +17,14 @@
     "@medusajs/types": "^2.13.5",
     "@nuxt/image": "^2.0.0",
     "@nuxt/ui": "^4.5.1",
+    "@stripe/stripe-js": "^8.7.0",
     "lodash-es": "^4.17.23",
     "nuxt": "^4.4.2",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
+    "@types/node": "^24.6.1",
     "eslint": "^10.0.3",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.5"

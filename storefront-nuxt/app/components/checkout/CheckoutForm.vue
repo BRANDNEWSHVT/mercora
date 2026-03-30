@@ -1,23 +1,18 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 const { cart } = useCart()
-
-const shippingMethods = ref<Record<string, unknown>[]>([])
-const paymentMethods = ref<Record<string, unknown>[]>([])
-
-onMounted(async () => {
-  if (!cart.value) return
-  await Promise.all([fetchShippingMethods(), fetchPaymentMethods()])
-})
-
-watch(() => cart.value?.id, async () => {
-  if (cart.value) {
-    await Promise.all([fetchShippingMethods(), fetchPaymentMethods()])
-  }
-})
+const cartId = computed(() => cart.value?.id ?? null)
+const regionId = computed(() => cart.value?.region?.id ?? null)
+const cartUpdatedAt = computed(() => cart.value?.updated_at ?? null)
 
 async function fetchShippingMethods() {
+  if (!cartId.value) {
+    return []
+  }
+
   try {
-    const data = await $fetch<Record<string, unknown>[]>('/api/cart/shipping-options')
+    const data = await $fetch<HttpTypes.StoreCartShippingOption[]>('/api/cart/shipping-options')
     shippingMethods.value = data || []
   } catch {
     shippingMethods.value = []
@@ -25,16 +20,35 @@ async function fetchShippingMethods() {
 }
 
 async function fetchPaymentMethods() {
-  if (!cart.value?.region?.id) return
+  if (!regionId.value) {
+    paymentMethods.value = []
+    return
+  }
+
   try {
-    const data = await $fetch<Record<string, unknown>[]>('/api/cart/payment-methods', {
-      params: { regionId: cart.value.region.id }
+    const data = await $fetch<HttpTypes.StorePaymentProvider[]>('/api/cart/payment-methods', {
+      params: { regionId: regionId.value }
     })
     paymentMethods.value = data || []
   } catch {
     paymentMethods.value = []
   }
 }
+
+const shippingMethods = ref<HttpTypes.StoreCartShippingOption[]>([])
+const paymentMethods = ref<HttpTypes.StorePaymentProvider[]>([])
+
+await Promise.all([fetchShippingMethods(), fetchPaymentMethods()])
+
+watch([cartId, regionId, cartUpdatedAt], async ([nextCartId, nextRegionId, nextUpdatedAt], [prevCartId, prevRegionId, prevUpdatedAt]) => {
+  if (nextCartId !== prevCartId || nextUpdatedAt !== prevUpdatedAt) {
+    await fetchShippingMethods()
+  }
+
+  if (nextRegionId !== prevRegionId || nextUpdatedAt !== prevUpdatedAt) {
+    await fetchPaymentMethods()
+  }
+})
 </script>
 
 <template>

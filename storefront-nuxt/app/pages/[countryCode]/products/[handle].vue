@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 const route = useRoute()
 const countryCode = computed(() => route.params.countryCode as string)
 const handle = computed(() => route.params.handle as string)
@@ -11,25 +13,32 @@ const { data: region } = await useAsyncData(
 
 const { data: productData } = await useAsyncData(
   `product-${handle.value}`,
-  async () => {
+  async (): Promise<HttpTypes.StoreProduct | null> => {
     const r = region.value
     if (!r) return null
-    const res = await $fetch<{ products?: Array<Record<string, unknown>> }>('/api/products', {
+    const res = await $fetch<{ products?: HttpTypes.StoreProduct[] }>('/api/products', {
       query: {
         handle: handle.value,
         region_id: r.id,
-        fields: '*variants.calculated_price'
+        fields: '*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags'
       }
     })
     return res.products?.[0] ?? null
   }
 )
 
+if (!region.value || !productData.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Product not found'
+  })
+}
+
 useSeoMeta({
   title: () => productData.value ? `${productData.value.title} | Medusa Store` : 'Product | Medusa Store',
-  description: () => productData.value?.description || '',
+  description: () => productData.value?.title ?? undefined,
   ogTitle: () => productData.value ? `${productData.value.title} | Medusa Store` : '',
-  ogImage: () => productData.value?.thumbnail || ''
+  ogImage: () => productData.value?.thumbnail ?? undefined
 })
 </script>
 
@@ -44,13 +53,14 @@ useSeoMeta({
         <ProductTabs :product="productData" />
       </div>
       <div class="block w-full relative">
-        <ProductImageGallery :images="productData.images || []" />
+        <ProductImageGallery :images="productData.images ?? []" />
       </div>
       <div class="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-12">
         <ProductOnboardingCta />
-        <ProductActions
-          :product="productData"
+        <ProductActionsWrapper
+          :id="productData.id"
           :region="region"
+          :fallback-product="productData"
         />
       </div>
     </div>

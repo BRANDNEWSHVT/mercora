@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "node \"/Users/macbook/React/next/mercora/storefront-nuxt/.github/hooks/context-monitor.cjs\"",
+        "timeoutSec": 5
+      }
+    ],
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "node \"/Users/macbook/React/next/mercora/storefront-nuxt/.github/hooks/update-check.cjs\"",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

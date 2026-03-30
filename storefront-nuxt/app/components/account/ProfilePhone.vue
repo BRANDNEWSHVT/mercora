@@ -46,6 +46,7 @@ function clearState() {
     :is-success="isSuccess"
     :is-error="isError"
     :error-message="errorMessage"
+    data-testid="account-phone-editor"
     @save="handleSave"
     @clear-state="clearState"
   >
@@ -53,6 +54,8 @@ function clearState() {
       v-model="phone"
       type="tel"
       placeholder="Phone number"
+      required
+      data-testid="phone-input"
     />
   </AccountInfo>
 </template>

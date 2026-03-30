@@ -1,36 +1,11 @@
 <script setup lang="ts">
-import { isEqual } from 'lodash-es'
+import type { HttpTypes } from '@medusajs/types'
 
-interface ProductOptionValue {
-  option_id: string
-  value: string
-}
-
-interface ProductVariant {
-  id: string
-  options?: ProductOptionValue[]
-  manage_inventory?: boolean | null
-  allow_backorder?: boolean | null
-  inventory_quantity?: number | null
-}
-
-interface ProductOption {
-  id: string
-  title?: string | null
-}
-
-interface ProductDetails {
-  variants?: ProductVariant[]
-  options?: ProductOption[]
-}
-
-interface RegionDetails {
-  id: string
-}
+type ProductOptionValue = HttpTypes.StoreProductOptionValue
 
 const props = defineProps<{
-  product: ProductDetails
-  region?: RegionDetails | null
+  product: HttpTypes.StoreProduct
+  region?: HttpTypes.StoreRegion | null
   disabled?: boolean
 }>()
 
@@ -39,17 +14,37 @@ const { addToCart } = useCart()
 const options = ref<Record<string, string | undefined>>({})
 const isAdding = ref(false)
 
-const optionsAsKeymap = (variantOptions?: ProductOptionValue[]) => {
+const optionsAsKeymap = (variantOptions?: ProductOptionValue[] | null) => {
   return variantOptions?.reduce((acc: Record<string, string>, varopt) => {
-    acc[varopt.option_id] = varopt.value
+    if (varopt.option_id && varopt.value) {
+      acc[varopt.option_id] = varopt.value
+    }
     return acc
   }, {})
+}
+
+const areOptionsEqual = (
+  first: Record<string, string | undefined>,
+  second: Record<string, string | undefined>
+) => {
+  const firstEntries = Object.entries(first).sort(([left], [right]) => left.localeCompare(right))
+  const secondEntries = Object.entries(second).sort(([left], [right]) => left.localeCompare(right))
+
+  if (firstEntries.length !== secondEntries.length) {
+    return false
+  }
+
+  return firstEntries.every(([key, value], index) => {
+    const [otherKey, otherValue] = secondEntries[index] ?? []
+    return key === otherKey && value === otherValue
+  })
 }
 
 // Pre-select if only 1 variant
 onMounted(() => {
   if (props.product.variants?.length === 1) {
-    const variantOptions = optionsAsKeymap(props.product.variants[0].options)
+    const [singleVariant] = props.product.variants
+    const variantOptions = optionsAsKeymap(singleVariant?.options)
     options.value = variantOptions ?? {}
   }
 })
@@ -58,7 +53,7 @@ const selectedVariant = computed(() => {
   if (!props.product.variants?.length) return undefined
   return props.product.variants.find((variant) => {
     const variantOptions = optionsAsKeymap(variant.options)
-    return isEqual(variantOptions, options.value)
+    return areOptionsEqual(variantOptions ?? {}, options.value)
   })
 })
 
@@ -69,7 +64,7 @@ const setOptionValue = (optionId: string, value: string) => {
 const isValidVariant = computed(() => {
   return props.product.variants?.some((variant) => {
     const variantOptions = optionsAsKeymap(variant.options)
-    return isEqual(variantOptions, options.value)
+    return areOptionsEqual(variantOptions ?? {}, options.value)
   })
 })
 
@@ -86,7 +81,7 @@ const inView = ref(true)
 onMounted(() => {
   if (!actionsRef.value) return
   const observer = new IntersectionObserver(
-    ([entry]) => { inView.value = entry.isIntersecting },
+    (entries) => { inView.value = entries[0]?.isIntersecting ?? false },
     { threshold: 0 }
   )
   observer.observe(actionsRef.value)

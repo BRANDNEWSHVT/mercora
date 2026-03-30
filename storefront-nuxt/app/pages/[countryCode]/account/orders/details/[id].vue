@@ -10,23 +10,21 @@ const { data: order } = await useAsyncData<HttpTypes.StoreOrder>(
   () => apiFetch('/api/orders', { query: { id: orderId.value } })
 )
 
+if (!order.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Order not found'
+  })
+}
+
+const orderData = order.value
+
 useSeoMeta({
-  title: () => order.value ? `Order #${order.value.display_id} | Medusa Store` : 'Order Details'
+  title: () => order.value ? `Order #${order.value.display_id}` : 'Order Details',
+  description: 'View your order'
 })
 </script>
 
 <template>
-  <OrderDetailsTemplate
-    v-if="order"
-    :order="order"
-  />
-  <div
-    v-else
-    class="flex items-center justify-center min-h-[50vh]"
-  >
-    <UIcon
-      name="i-lucide-loader-2"
-      class="animate-spin w-8 h-8"
-    />
-  </div>
+  <OrderDetailsTemplate :order="orderData" />
 </template>

@@ -1,8 +1,3 @@
-<script setup lang="ts">
-const route = useRoute()
-const countryCode = computed(() => route.params.countryCode as string)
-</script>
-
 <template>
   <div class="flex items-center justify-between gap-6 bg-white">
     <div>
@@ -13,7 +8,7 @@ const countryCode = computed(() => route.params.countryCode as string)
         Sign in for a better experience.
       </p>
     </div>
-    <NuxtLink :to="`/${countryCode}/account`">
+    <NuxtLinkLocale to="/account">
       <button
         type="button"
         class="inline-flex h-10 items-center justify-center rounded-md border border-ui-border-base px-4 text-sm font-medium text-ui-fg-base transition-colors hover:bg-ui-bg-subtle"
@@ -21,6 +16,6 @@ const countryCode = computed(() => route.params.countryCode as string)
       >
         Sign in
       </button>
-    </NuxtLink>
+    </NuxtLinkLocale>
   </div>
 </template>

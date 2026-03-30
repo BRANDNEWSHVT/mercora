@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 const props = defineProps<{
-  product: any
+  product: HttpTypes.StoreProduct
   countryCode: string
 }>()
 
@@ -8,21 +10,27 @@ const { getRegion } = useRegion()
 
 const { data: relatedProducts } = useAsyncData(
   `related-${props.product.id}`,
-  async () => {
+  async (): Promise<HttpTypes.StoreProduct[]> => {
     const region = await getRegion(props.countryCode)
     if (!region) return []
 
-    const query: Record<string, any> = {
+    const query: Record<string, string | boolean> = {
       region_id: region.id,
       is_giftcard: false,
-      fields: '*variants.calculated_price',
+      fields: '*variants.calculated_price'
     }
     if (props.product.collection_id) {
       query.collection_id = props.product.collection_id
     }
+    if (props.product.tags?.length) {
+      query.tag_id = props.product.tags
+        .map(tag => tag.id)
+        .filter((id): id is string => Boolean(id))
+        .join(',')
+    }
 
-    const res = await $fetch('/api/products', { query })
-    return (res as any).products?.filter((p: any) => p.id !== props.product.id) ?? []
+    const res = await $fetch<{ products?: HttpTypes.StoreProduct[] }>('/api/products', { query })
+    return res.products?.filter(item => item.id !== props.product.id) ?? []
   }
 )
 </script>
@@ -36,7 +44,10 @@ const { data: relatedProducts } = useAsyncData(
       </p>
     </div>
     <ul class="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
-      <li v-for="p in relatedProducts.slice(0, 4)" :key="p.id">
+      <li
+        v-for="p in relatedProducts.slice(0, 4)"
+        :key="p.id"
+      >
         <ProductPreview :product="p" />
       </li>
     </ul>

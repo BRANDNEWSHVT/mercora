@@ -1,16 +1,22 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 defineProps<{
-  collections: any[]
-  region: any
+  collections: HttpTypes.StoreCollection[]
+  region: HttpTypes.StoreRegion
 }>()
 </script>
 
 <template>
-  <ul>
-    <li v-for="collection in collections" :key="collection.id">
-      <Suspense>
-        <HomeProductRail :collection="collection" :region="region" />
-      </Suspense>
-    </li>
-  </ul>
+  <li
+    v-for="collection in collections"
+    :key="collection.id"
+  >
+    <Suspense>
+      <HomeProductRail
+        :collection="collection"
+        :region="region"
+      />
+    </Suspense>
+  </li>
 </template>

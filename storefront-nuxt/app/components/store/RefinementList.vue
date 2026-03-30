@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import type { SortOptions } from '~/types'
+
 const { sortBy } = defineProps<{
-  sortBy: string
+  sortBy: SortOptions
 }>()
 
 const emit = defineEmits<{
-  (e: 'setSort', value: string): void
+  (e: 'setSort', value: SortOptions): void
 }>()
 
-const sortOptions = [
+const sortOptions: Array<{ label: string, value: SortOptions }> = [
   { label: 'Latest Arrivals', value: 'created_at' },
   { label: 'Price: Low -> High', value: 'price_asc' },
   { label: 'Price: High -> Low', value: 'price_desc' }

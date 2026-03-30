@@ -1,28 +1,54 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 const route = useRoute()
-const categoryHandle = computed(() => {
+const categorySegments = computed<string[]>(() => {
   const cat = route.params.category
-  return Array.isArray(cat) ? cat[cat.length - 1] : cat
+  if (Array.isArray(cat)) {
+    return cat.map(segment => String(segment))
+  }
+
+  return cat ? [String(cat)] : []
 })
+const categoryHandle = computed(() => categorySegments.value.join('/'))
 
 const { data: category } = await useAsyncData(
   `category-${categoryHandle.value}`,
-  async () => {
-    const res = await $fetch('/api/categories', { query: { handle: categoryHandle.value } })
-    const cats = (res as any).product_categories ?? []
-    return cats.find((c: any) => c.handle === categoryHandle.value) ?? cats[0] ?? null
+  async (): Promise<HttpTypes.StoreProductCategory | null> => {
+    const categories = await $fetch<HttpTypes.StoreProductCategory[]>('/api/categories', {
+      query: { handle: categoryHandle.value }
+    })
+
+    return categories.find(item => item.handle === categoryHandle.value) ?? categories[0] ?? null
   }
 )
 
+if (!category.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Category not found'
+  })
+}
+
 useSeoMeta({
-  title: () => category.value ? `${category.value.name} | Medusa Store` : 'Category',
-  description: () => category.value?.description || '',
+  title: () => category.value ? `${category.value.name} | Medusa Store` : 'Category | Medusa Store',
+  description: () => category.value?.description ?? `${category.value?.name ?? 'Category'} category.`
 })
 </script>
 
 <template>
-  <StoreCategoryTemplate v-if="category" :category="category" />
-  <div v-else class="flex items-center justify-center min-h-[50vh]">
-    <UIcon name="i-lucide-loader-2" class="animate-spin w-8 h-8" />
+  <StoreCategoryTemplate
+    v-if="category"
+    :category="category"
+    :skeleton-count="category.products?.length || 8"
+  />
+  <div
+    v-else
+    class="flex items-center justify-center min-h-[50vh]"
+  >
+    <UIcon
+      name="i-lucide-loader-2"
+      class="animate-spin w-8 h-8"
+    />
   </div>
 </template>

@@ -1,0 +1,11 @@
+{
+  "version": "4.2.0",
+  "installedAt": "2026-03-29T13:24:14.220Z",
+  "updatedAt": "2026-03-29T13:24:14.220Z",
+  "agents": [
+    "claude-code",
+    "codex"
+  ],
+  "skillCount": 33,
+  "scope": "local"
+}

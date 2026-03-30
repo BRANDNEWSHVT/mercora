@@ -1,0 +1,39 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/macbook/React/next/mercora/.claude/hooks/context-monitor.cjs\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/macbook/React/next/mercora/.claude/hooks/update-check.cjs\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "# Skills Memory Capture System\n\n**Approach:** Dual -- automatic capture + manual save\n**Purpose:** Maintain weighted project memory across sessions\n\n## Two Capture Methods\n\n### 1. PreCompact Hook (automatic)\n\n**Event:** PreCompact (fires before context window compression)\n**When:** Only on substantial sessions that hit the context limit -- the natural signal that meaningful work happened.\n**Cost:** ~1-3k tokens, only when context compacts (not every response).\n\n```json\n{\n  \"PreCompact\": [\n    {\n      \"matcher\": \"*\",\n      \"hooks\": [\n        {\n          \"type\": \"prompt\",\n          \"prompt\": \"Context is about to be compressed. Before that happens, capture anything worth remembering. Read MEMORY.md from the auto memory directory. Review what happened this session so far. Weight system: [W5] CRITICAL (architecture decisions, user hard preferences, 'never do X'), [W4] IMPORTANT (patterns confirmed across 2+ sessions, debugging breakthroughs), [W3] USEFUL (working solutions, library choices, config that worked), [W2] CONTEXT (project state, what was tried, environment quirks), [W1] OBSERVED (single-session observations, unconfirmed patterns). Rules: Only add what helps a FUTURE session. New discoveries start at W1. Promote existing W1 to W3+ if confirmed this session. Fix wrong memories immediately. Increment prune counter, prune W1 after 5 sessions. Keep under 200 lines. If nothing worth remembering, do nothing. Return approve when done.\"\n        }\n      ]\n    }\n  ]\n}\n```\n\n### 2. Manual Save (via command)\n\n**When:** User explicitly wants to save something mid-session.\n**Use cases:**\n- Short session with an important insight (won't trigger PreCompact)\n- User says \"remember this\" or \"always do X\"\n- Promote a W1 observation to W3+ after confirmation\n- Correct a wrong memory\n\n## Weight System\n\n```\n[W5] CRITICAL   -- Architecture decisions, user hard preferences     (permanent)\n[W4] IMPORTANT  -- Confirmed patterns, debugging breakthroughs       (permanent)\n[W3] USEFUL     -- Working solutions, library choices                (long-lived)\n[W2] CONTEXT    -- Project state, environment quirks                 (medium-lived)\n[W1] OBSERVED   -- Single-session observations                      (pruned after 5 sessions)\n```\n\n## How It Works\n\n```\nLong session hits context limit\n  -> PreCompact hook fires\n  -> AI reads MEMORY.md\n  -> Reflects on session learnings\n  -> Updates memories with appropriate weights\n  -> Returns 'approve', context compresses normally\n\nShort session with key insight\n  -> User manually triggers memory save\n  -> AI reads MEMORY.md\n  -> Adds memory with appropriate weight\n  -> Confirms what was saved\n```\n\n## Memory Lifecycle\n\n```\nSession 1: Observation discovered          -> [W1] OBSERVED\nSession 3: Same pattern confirmed          -> [W1] promoted to [W3] USEFUL\nSession 5: Unconfirmed W1s                 -> Pruned (auto)\nSession 7: Pattern proves critical         -> [W3] promoted to [W4] IMPORTANT\nUser says \"always do this\"                 -> [W5] CRITICAL (immediate)\nUser corrects a wrong memory              -> Fixed or removed (immediate)\n```\n\n## Installation\n\n- PreCompact hook: Registered in settings.json by installer\n- Uninstall: Cleaned up by installer --uninstall"
+          }
+        ],
+        "matcher": "*"
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node \"/Users/macbook/React/next/mercora/.claude/hooks/statusline.cjs\""
+  }
+}

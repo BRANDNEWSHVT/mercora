@@ -4,8 +4,6 @@ import type { HttpTypes } from '@medusajs/types'
 defineProps<{
   orders: HttpTypes.StoreOrder[]
 }>()
-
-const countryCode = useCountryCode()
 </script>
 
 <template>
@@ -34,11 +32,11 @@ const countryCode = useCountryCode()
         You don't have any orders yet, let us change that :)
       </p>
       <div class="mt-4">
-        <NuxtLink :to="`/${countryCode}`">
+        <NuxtLinkLocale to="/">
           <UButton data-testid="continue-shopping-button">
             Continue shopping
           </UButton>
-        </NuxtLink>
+        </NuxtLinkLocale>
       </div>
     </div>
   </div>

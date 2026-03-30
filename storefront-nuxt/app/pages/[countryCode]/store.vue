@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Store | Medusa Store',
-  description: 'Explore all of our products.',
+  title: 'Store',
+  description: 'Explore all of our products.'
 })
 </script>
 

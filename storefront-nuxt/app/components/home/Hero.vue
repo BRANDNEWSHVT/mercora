@@ -13,7 +13,7 @@
         href="https://github.com/medusajs/nextjs-starter-medusa"
         target="_blank"
       >
-        <UButton variant="outline">
+        <UButton variant="soft">
           View on GitHub
           <UIcon
             name="i-simple-icons-github"

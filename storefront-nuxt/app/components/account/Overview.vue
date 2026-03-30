@@ -4,17 +4,16 @@ import { apiFetch } from '~/utils/api'
 import { convertToLocale } from '~/utils/money'
 
 const { customer } = useCustomer()
-
-const orders = ref<HttpTypes.StoreOrder[]>([])
-
-onMounted(async () => {
-  try {
-    const data = await apiFetch<HttpTypes.StoreOrder[]>('/api/orders', { query: { limit: 5 } })
-    orders.value = data || []
-  } catch {
-    orders.value = []
+const { data: orders } = await useAsyncData<HttpTypes.StoreOrder[]>(
+  'account-overview-orders',
+  async () => {
+    try {
+      return await apiFetch<HttpTypes.StoreOrder[]>('/api/orders', { query: { limit: 5 } }) || []
+    } catch {
+      return []
+    }
   }
-})
+)
 
 function getProfileCompletion(c: HttpTypes.StoreCustomer | null): number {
   if (!c) return 0
@@ -27,6 +26,7 @@ function getProfileCompletion(c: HttpTypes.StoreCustomer | null): number {
 }
 
 const addressCount = computed(() => customer.value?.addresses?.length ?? 0)
+const orderList = computed(() => orders.value ?? [])
 </script>
 
 <template>
@@ -100,9 +100,9 @@ const addressCount = computed(() => customer.value?.addresses?.length ?? 0)
               class="flex flex-col gap-y-4"
               data-testid="orders-wrapper"
             >
-              <template v-if="orders && orders.length > 0">
+              <template v-if="orderList.length > 0">
                 <li
-                  v-for="order in orders.slice(0, 5)"
+                  v-for="order in orderList.slice(0, 5)"
                   :key="order.id"
                   data-testid="order-wrapper"
                   :data-value="order.id"

@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import type { SortOptions } from '~/types'
+
 const route = useRoute()
 const router = useRouter()
 
-const sortBy = computed(() => (route.query.sortBy as string) || 'created_at')
+const sortBy = computed<SortOptions>(() => (route.query.sortBy as SortOptions) || 'created_at')
 const page = computed(() => Number(route.query.page) || 1)
 
-const setSort = (value: string) => {
+const setSort = (value: SortOptions) => {
   router.push({ query: { ...route.query, sortBy: value, page: '1' } })
 }
 

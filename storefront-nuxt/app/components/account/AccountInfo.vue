@@ -1,11 +1,18 @@
 <script setup lang="ts">
-defineProps<{
+const props = withDefaults(defineProps<{
   label: string
-  currentInfo: string
-  isSuccess: boolean
-  isError: boolean
+  currentInfo?: string
+  isSuccess?: boolean
+  isError?: boolean
   errorMessage?: string
-}>()
+}>(), {
+  currentInfo: '',
+  isSuccess: false,
+  isError: false,
+  errorMessage: 'An error occurred, please try again'
+})
+
+const attrs = useAttrs()
 
 const emit = defineEmits<{
   'save': []
@@ -15,33 +22,49 @@ const emit = defineEmits<{
 const isEditing = ref(false)
 
 function toggleEdit() {
+  emit('clear-state')
   isEditing.value = !isEditing.value
-  if (!isEditing.value) {
-    emit('clear-state')
-  }
 }
 
 function handleSubmit() {
   emit('save')
 }
+
+watch(() => props.isSuccess, (isSuccess) => {
+  if (isSuccess) {
+    isEditing.value = false
+  }
+})
 </script>
 
 <template>
-  <div class="text-small-regular">
+  <div
+    v-bind="attrs"
+    class="text-small-regular"
+  >
     <div class="flex items-end justify-between">
       <div class="flex flex-col">
         <span class="uppercase text-ui-fg-base">{{ label }}</span>
-        <div class="flex items-center gap-x-2 mt-1">
+        <div class="flex items-center flex-1 basis-0 justify-end gap-x-4">
+          <slot
+            v-if="$slots['current-info']"
+            name="current-info"
+          />
           <span
-            v-if="!isEditing"
-            class="text-ui-fg-subtle"
-          >{{ currentInfo }}</span>
+            v-else
+            class="font-semibold"
+            data-testid="current-info"
+          >
+            {{ currentInfo }}
+          </span>
         </div>
       </div>
       <UButton
-        variant="ghost"
-        :color="isEditing ? 'neutral' : 'primary'"
+        variant="outline"
         size="sm"
+        class="w-[100px] min-h-[25px] py-1"
+        :data-active="isEditing"
+        data-testid="edit-button"
         @click="toggleEdit"
       >
         {{ isEditing ? 'Cancel' : 'Edit' }}
@@ -58,19 +81,23 @@ function handleSubmit() {
     >
       <div
         v-if="isEditing"
-        class="mt-4"
+        class="py-4 overflow-visible"
       >
         <form @submit.prevent="handleSubmit">
-          <div class="flex flex-col gap-y-4">
-            <slot />
+          <div class="flex flex-col gap-y-2">
+            <div>
+              <slot />
+            </div>
           </div>
-          <UButton
-            type="submit"
-            class="mt-4"
-            size="sm"
-          >
-            Save changes
-          </UButton>
+          <div class="flex items-center justify-end mt-2">
+            <UButton
+              type="submit"
+              class="w-full small:max-w-[140px]"
+              data-testid="save-button"
+            >
+              Save changes
+            </UButton>
+          </div>
         </form>
       </div>
     </Transition>
@@ -86,16 +113,18 @@ function handleSubmit() {
       <UBadge
         v-if="isSuccess"
         color="success"
-        class="mt-2"
+        class="p-2 my-4"
+        data-testid="success-message"
       >
-        Updated successfully
+        <span>{{ label }} updated succesfully</span>
       </UBadge>
       <UBadge
         v-else-if="isError"
         color="error"
-        class="mt-2"
+        class="p-2 my-4"
+        data-testid="error-message"
       >
-        {{ errorMessage || 'An error occurred' }}
+        <span>{{ errorMessage }}</span>
       </UBadge>
     </Transition>
   </div>

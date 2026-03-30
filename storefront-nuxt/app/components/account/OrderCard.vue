@@ -6,8 +6,6 @@ const props = defineProps<{
   order: HttpTypes.StoreOrder
 }>()
 
-const countryCode = useCountryCode()
-
 const numberOfLines = computed(() =>
   props.order.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0
 )
@@ -87,16 +85,14 @@ function formatDate(date: string | Date) {
       </div>
     </div>
     <div class="flex justify-end">
-      <NuxtLink
-        :to="`/${countryCode}/account/orders/details/${order.id}`"
-      >
+      <NuxtLinkLocale :to="`/account/orders/details/${order.id}`">
         <UButton
           data-testid="order-details-link"
           variant="outline"
         >
           See details
         </UButton>
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
   </div>
 </template>
