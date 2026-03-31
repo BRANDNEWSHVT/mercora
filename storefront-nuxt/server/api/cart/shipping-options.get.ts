@@ -8,16 +8,20 @@ export default defineEventHandler(async (event) => {
     return []
   }
 
-  const { shipping_options } = await sdk.client.fetch<{
-    shipping_options: HttpTypes.StoreCartShippingOption[]
-  }>('/store/shipping-options', {
-    query: {
-      cart_id: cartId,
-      fields: '+service_zone.fulfllment_set.type,*service_zone.fulfillment_set.location.address'
-    },
-    headers,
-    cache: 'force-cache'
-  })
+  try {
+    const { shipping_options } = await sdk.client.fetch<{
+      shipping_options: HttpTypes.StoreCartShippingOption[]
+    }>('/store/shipping-options', {
+      query: {
+        cart_id: cartId,
+        fields: '+service_zone.fulfillment_set.type,*service_zone.fulfillment_set.location.address'
+      },
+      headers,
+      cache: 'force-cache'
+    })
 
-  return shipping_options
+    return shipping_options
+  } catch {
+    return []
+  }
 })

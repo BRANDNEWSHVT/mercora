@@ -32,29 +32,29 @@ export default defineEventHandler(async (event) => {
       email: body.email,
       password: body.password
     })
+    const registrationHeaders = { authorization: `Bearer ${token}` }
 
     setAuthToken(event, token as string)
 
-    const authHeaders = getAuthHeaders(event)
     await sdk.store.customer.create({
       email: body.email,
       first_name: body.first_name,
       last_name: body.last_name,
       phone: body.phone
-    }, {}, authHeaders)
+    }, {}, registrationHeaders)
 
     const loginToken = await sdk.auth.login('customer', 'emailpass', {
       email: body.email,
       password: body.password
     })
+    const loginHeaders = { authorization: `Bearer ${loginToken}` }
 
     setAuthToken(event, loginToken as string)
 
     // Transfer cart if exists
     const cartId = getCartId(event)
     if (cartId) {
-      const newHeaders = getAuthHeaders(event)
-      await sdk.store.cart.transferCart(cartId, {}, newHeaders)
+      await sdk.store.cart.transferCart(cartId, {}, loginHeaders)
     }
 
     return { success: true }

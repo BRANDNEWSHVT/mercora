@@ -6,8 +6,8 @@ const countryCode = computed(() => route.params.countryCode as string)
 const { getRegion } = useRegion()
 
 useSeoMeta({
-  title: 'Medusa Next.js Starter Template',
-  description: 'A performant frontend ecommerce starter template with Next.js 15 and Medusa.'
+  title: 'Medusa Nuxt Storefront',
+  description: 'A performant frontend ecommerce storefront built with Nuxt 4, Vue 3, and Medusa.'
 })
 
 const { data: collections, error: collectionsError } = await useAsyncData('home-collections', () =>

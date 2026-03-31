@@ -6,7 +6,7 @@
           Ecommerce Starter Template
         </h1>
         <h2 class="text-3xl leading-10 text-ui-fg-subtle font-normal">
-          Powered by Medusa and Next.js
+          Powered by Medusa, Nuxt, and Vue
         </h2>
       </span>
       <a
