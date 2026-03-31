@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 const props = defineProps<{
-  option: any
+  option: HttpTypes.StoreProductOption
   current: string | undefined
   title: string
   disabled?: boolean
@@ -12,14 +14,17 @@ const emit = defineEmits<{
 }>()
 
 const filteredOptions = computed(() => {
-  return (props.option.values ?? []).map((v: any) => v.value)
+  return (props.option.values ?? []).map(v => v.value)
 })
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-3" :data-testid="dataTestid">
+  <div class="flex flex-col gap-y-3">
     <span class="text-sm">Select {{ title }}</span>
-    <div class="flex flex-wrap justify-between gap-2">
+    <div
+      class="flex flex-wrap justify-between gap-2"
+      :data-testid="dataTestid"
+    >
       <button
         v-for="v in filteredOptions"
         :key="v"

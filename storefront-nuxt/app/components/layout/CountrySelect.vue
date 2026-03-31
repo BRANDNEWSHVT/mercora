@@ -1,22 +1,5 @@
 <script setup lang="ts">
-const route = useRoute()
-const countryCode = computed(() => route.params.countryCode as string)
-const { regions } = useRegion()
-
-const isOpen = ref(false)
-
-const options = computed(() => {
-  if (!regions.value) return []
-  return regions.value
-    .flatMap((r: any) =>
-      (r.countries ?? []).map((c: any) => ({
-        country: c.iso_2,
-        region: r.id,
-        label: c.display_name
-      }))
-    )
-    .sort((a: any, b: any) => (a.label ?? '').localeCompare(b.label ?? ''))
-})
+import type { HttpTypes } from '@medusajs/types'
 
 interface CountryOption {
   country: string
@@ -24,10 +7,58 @@ interface CountryOption {
   label: string
 }
 
+const emit = defineEmits<{
+  (e: 'openChange', value: boolean): void
+}>()
+
+const route = useRoute()
+const countryCode = computed(() => route.params.countryCode as string)
+const { regions, fetchRegions, getRegion } = useRegion()
+const { cart, fetchCart, updateCart } = useCart()
+
+const isOpen = ref(false)
+
+const options = computed<CountryOption[]>(() => {
+  if (!regions.value) return []
+  return regions.value
+    .flatMap((r: HttpTypes.StoreRegion) =>
+      (r.countries ?? []).map(c => ({
+        country: c.iso_2,
+        region: r.id,
+        label: c.display_name
+      }))
+    )
+    .filter((option): option is CountryOption => Boolean(option.country && option.label))
+    .sort((a, b) => (a.label ?? '').localeCompare(b.label ?? ''))
+})
+
 const current = computed(() => options.value.find((o: CountryOption) => o.country === countryCode.value))
 
-const handleChange = (option: CountryOption) => {
+watch(isOpen, (value) => {
+  emit('openChange', value)
+})
+
+onMounted(async () => {
+  if (!regions.value.length) {
+    await fetchRegions()
+  }
+})
+
+const flagEmoji = (value: string) => {
+  return value
+    .toUpperCase()
+    .replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt(0)))
+}
+
+const handleChange = async (option: CountryOption) => {
   const currentPath = route.path.split(`/${countryCode.value}`)[1] || ''
+  const existingCart = cart.value ?? await fetchCart()
+  const nextRegion = await getRegion(option.country)
+
+  if (existingCart?.id && nextRegion?.id) {
+    await updateCart({ region_id: nextRegion.id })
+  }
+
   navigateTo(`/${option.country}${currentPath}`)
   isOpen.value = false
 }
@@ -45,6 +76,7 @@ const handleChange = (option: CountryOption) => {
           v-if="current"
           class="txt-compact-small flex items-center gap-x-2"
         >
+          <span>{{ flagEmoji(current.country) }}</span>
           {{ current.label }}
         </span>
       </div>
@@ -65,6 +97,7 @@ const handleChange = (option: CountryOption) => {
             class="py-2 hover:bg-gray-200 px-3 cursor-pointer flex items-center gap-x-2"
             @click="handleChange(o)"
           >
+            <span>{{ flagEmoji(o.country) }}</span>
             {{ o.label }}
           </li>
         </ul>

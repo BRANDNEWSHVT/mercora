@@ -11,6 +11,19 @@ const shippingAddress = computed(() => props.order.shipping_address)
 const shippingMethod = computed(() => {
   return props.order.shipping_methods?.[0] ?? null
 })
+
+const shippingMethodPrice = computed(() => {
+  if (!shippingMethod.value) {
+    return null
+  }
+
+  return convertToLocale({
+    amount: shippingMethod.value.total ?? 0,
+    currency_code: props.order.currency_code
+  })
+    .replace(/,/g, '')
+    .replace(/\./g, ',')
+})
 </script>
 
 <template>
@@ -56,7 +69,6 @@ const shippingMethod = computed(() => {
         </p>
       </div>
       <div
-        v-if="shippingMethod"
         class="flex flex-col w-1/3"
         data-testid="shipping-method-summary"
       >
@@ -64,8 +76,8 @@ const shippingMethod = computed(() => {
           Method
         </p>
         <p class="txt-medium text-ui-fg-subtle">
-          {{ shippingMethod.name }}
-          ({{ convertToLocale({ amount: shippingMethod.total ?? 0, currency_code: order.currency_code }) }})
+          {{ shippingMethod?.name }}
+          ({{ shippingMethodPrice }})
         </p>
       </div>
     </div>

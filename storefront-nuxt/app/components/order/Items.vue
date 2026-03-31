@@ -6,26 +6,24 @@ const props = defineProps<{
 }>()
 
 const sortedItems = computed(() => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return [...(props.order.items || [])].sort((a: any, b: any) => {
+  return [...(props.order.items || [])].sort((a, b) => {
     return (a.created_at ?? '') > (b.created_at ?? '') ? -1 : 1
   })
 })
 </script>
 
 <template>
-  <div>
-    <CommonDivider class="mb-4" />
-    <h2 class="text-xl-semi mb-4">
-      Order Items
-    </h2>
-    <div class="flex flex-col divide-y divide-gray-200">
-      <OrderItem
-        v-for="item in sortedItems"
-        :key="item.id"
-        :item="item"
-        :currency-code="order.currency_code"
-      />
-    </div>
+  <div class="flex flex-col">
+    <CommonDivider class="mb-0!" />
+    <table>
+      <tbody data-testid="products-table">
+        <OrderItem
+          v-for="item in sortedItems"
+          :key="item.id"
+          :item="item"
+          :currency-code="order.currency_code"
+        />
+      </tbody>
+    </table>
   </div>
 </template>

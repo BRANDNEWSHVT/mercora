@@ -2,6 +2,8 @@
 const route = useRoute()
 const countryCode = computed(() => route.params.countryCode as string)
 const isOpen = ref(false)
+const isCountrySelectOpen = ref(false)
+const { regions } = useRegion()
 
 const menuItems = [
   { name: 'Home', href: '/' },
@@ -62,12 +64,13 @@ const menuItems = [
             </ul>
             <div class="flex flex-col gap-y-6">
               <div
-                class="flex justify-between items-center group"
+                class="flex justify-between items-center"
               >
-                <LayoutCountrySelect />
+                <LayoutCountrySelect @open-change="isCountrySelectOpen = $event" />
                 <UIcon
+                  v-if="regions?.length"
                   name="i-lucide-arrow-right"
-                  class="w-5 h-5 transition-transform duration-150 group-hover:-rotate-90"
+                  :class="['w-5 h-5 transition-transform duration-150', isCountrySelectOpen ? '-rotate-90' : '']"
                 />
               </div>
               <p class="flex justify-between txt-compact-small">

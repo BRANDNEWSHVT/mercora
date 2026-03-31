@@ -7,38 +7,44 @@ defineProps<{
   token: string
 }>()
 
-const status = ref<'idle' | 'accepting' | 'declining' | 'success' | 'error'>('idle')
-const message = ref('')
+type TransferStatus = 'pending' | 'success' | 'error'
+
+const errorMessage = ref<string | null>(null)
+const status = ref<{
+  accept: TransferStatus | null
+  decline: TransferStatus | null
+}>({
+  accept: null,
+  decline: null
+})
 
 async function handleAccept(id: string, token: string) {
-  status.value = 'accepting'
-  message.value = ''
+  status.value = { accept: 'pending', decline: null }
+  errorMessage.value = null
   try {
     await apiFetch('/api/orders/transfer', {
       method: 'POST',
       body: { id, token, action: 'accept' }
     })
-    status.value = 'success'
-    message.value = 'Order transfer accepted successfully.'
+    status.value = { accept: 'success', decline: null }
   } catch (e: unknown) {
-    status.value = 'error'
-    message.value = getApiErrorMessage(e, 'Failed to accept transfer')
+    errorMessage.value = getApiErrorMessage(e, 'Failed to accept transfer')
+    status.value = { accept: 'error', decline: null }
   }
 }
 
 async function handleDecline(id: string, token: string) {
-  status.value = 'declining'
-  message.value = ''
+  status.value = { accept: null, decline: 'pending' }
+  errorMessage.value = null
   try {
     await apiFetch('/api/orders/transfer', {
       method: 'POST',
       body: { id, token, action: 'decline' }
     })
-    status.value = 'success'
-    message.value = 'Order transfer declined.'
+    status.value = { accept: null, decline: 'success' }
   } catch (e: unknown) {
-    status.value = 'error'
-    message.value = getApiErrorMessage(e, 'Failed to decline transfer')
+    errorMessage.value = getApiErrorMessage(e, 'Failed to decline transfer')
+    status.value = { accept: null, decline: 'error' }
   }
 }
 </script>
@@ -46,31 +52,46 @@ async function handleDecline(id: string, token: string) {
 <template>
   <div class="flex flex-col gap-y-4">
     <div
-      v-if="status === 'idle' || status === 'accepting' || status === 'declining'"
-      class="flex items-center gap-x-3"
+      v-if="status.accept === 'success'"
+    >
+      <p class="text-emerald-500">
+        Order transferred successfully!
+      </p>
+    </div>
+    <div
+      v-if="status.decline === 'success'"
+    >
+      <p class="text-emerald-500">
+        Order transfer declined successfully!
+      </p>
+    </div>
+    <div
+      v-if="status.accept !== 'success' && status.decline !== 'success'"
+      class="flex gap-x-4"
     >
       <UButton
-        :loading="status === 'accepting'"
-        :disabled="status === 'declining'"
+        size="lg"
+        :loading="status.accept === 'pending'"
+        :disabled="status.accept === 'pending' || status.decline === 'pending'"
         @click="handleAccept(id, token)"
       >
         Accept transfer
       </UButton>
       <UButton
         variant="outline"
-        :loading="status === 'declining'"
-        :disabled="status === 'accepting'"
+        size="lg"
+        :loading="status.decline === 'pending'"
+        :disabled="status.accept === 'pending' || status.decline === 'pending'"
         @click="handleDecline(id, token)"
       >
-        Decline
+        Decline transfer
       </UButton>
     </div>
     <p
-      v-if="message"
-      class="text-small-regular"
-      :class="status === 'error' ? 'text-rose-500' : 'text-green-600'"
+      v-if="errorMessage"
+      class="text-red-500"
     >
-      {{ message }}
+      {{ errorMessage }}
     </p>
   </div>
 </template>

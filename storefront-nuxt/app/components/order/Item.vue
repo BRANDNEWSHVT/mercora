@@ -1,53 +1,58 @@
 <script setup lang="ts">
-import { convertToLocale } from '~/utils/money'
+import type { HttpTypes } from '@medusajs/types'
 
-const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  item: any
+defineProps<{
+  item: HttpTypes.StoreOrderLineItem | HttpTypes.StoreCartLineItem
   currencyCode: string
 }>()
-
-const unitPrice = computed(() => {
-  const original = props.item.unit_price ?? 0
-  return convertToLocale({ amount: original, currency_code: props.currencyCode })
-})
-
-const totalPrice = computed(() => {
-  const total = (props.item.unit_price ?? 0) * props.item.quantity
-  return convertToLocale({ amount: total, currency_code: props.currencyCode })
-})
-
-const options = computed(() => {
-  return props.item.variant?.title || ''
-})
 </script>
 
 <template>
-  <div class="flex gap-x-4 py-3">
-    <div class="w-16 shrink-0">
-      <ProductThumbnail
-        :thumbnail="item.thumbnail"
-        size="square"
-      />
-    </div>
-    <div class="flex flex-1 items-center justify-between">
-      <div class="flex flex-col">
-        <p class="text-base-regular">
-          {{ item.title || item.product_title }}
-        </p>
-        <p
-          v-if="options"
-          class="text-small-regular text-ui-fg-subtle"
-        >
-          {{ options }}
-        </p>
-        <p class="text-small-regular text-ui-fg-subtle">
-          {{ item.quantity }} x {{ unitPrice }}
-        </p>
+  <tr
+    class="w-full"
+    data-testid="product-row"
+  >
+    <td class="pl-0! p-4 w-24">
+      <div class="flex w-16">
+        <ProductThumbnail
+          :thumbnail="item.thumbnail"
+          size="square"
+        />
       </div>
-      <p class="text-base-semi">
-        {{ totalPrice }}
+    </td>
+
+    <td class="text-left">
+      <p
+        class="txt-medium-plus text-ui-fg-base"
+        data-testid="product-name"
+      >
+        {{ item.product_title }}
       </p>
-    </div>
-  </div>
+      <CommonLineItemOptions
+        :variant="item.variant"
+        data-testid="product-variant"
+      />
+    </td>
+
+    <td class="pr-0!">
+      <span class="pr-0! flex flex-col items-end h-full justify-center">
+        <span class="flex gap-x-1">
+          <span class="text-ui-fg-muted">
+            <span data-testid="product-quantity">{{ item.quantity }}</span>x
+          </span>
+          <CommonLineItemUnitPrice
+            :item="item"
+            style-type="tight"
+            :currency-code="currencyCode"
+          />
+        </span>
+
+        <CommonLineItemPrice
+          :item="item"
+          style-type="tight"
+          :currency-code="currencyCode"
+        />
+      </span>
+    </td>
+  </tr>
 </template>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
 import { getProductPrice } from '~/utils/get-product-price'
 import { isSimpleProduct } from '~/utils/product'
 
 const props = defineProps<{
-  product: any
-  variant?: any
+  product: HttpTypes.StoreProduct
+  variant?: HttpTypes.StoreProductVariant
   options: Record<string, string | undefined>
   inStock?: boolean
   isAdding?: boolean
@@ -22,7 +23,7 @@ const isModalOpen = ref(false)
 const price = computed(() => {
   return getProductPrice({
     product: props.product,
-    variantId: props.variant?.id,
+    variantId: props.variant?.id
   })
 })
 
@@ -54,11 +55,16 @@ const isSimple = computed(() => isSimpleProduct(props.product))
           <div class="flex items-center gap-x-2">
             <span data-testid="mobile-title">{{ product.title }}</span>
             <span>—</span>
-            <div v-if="selectedPrice" class="flex items-end gap-x-2 text-ui-fg-base">
+            <div
+              v-if="selectedPrice"
+              class="flex items-end gap-x-2 text-ui-fg-base"
+            >
               <p v-if="selectedPrice.price_type === 'sale'">
                 <span class="line-through text-small-regular">{{ selectedPrice.original_price }}</span>
               </p>
-              <span :class="selectedPrice.price_type === 'sale' ? 'text-ui-fg-interactive' : ''">
+              <span
+                :class="selectedPrice.price_type === 'sale' ? 'text-ui-fg-interactive' : ''"
+              >
                 {{ selectedPrice.calculated_price }}
               </span>
             </div>
@@ -73,7 +79,10 @@ const isSimple = computed(() => isSimpleProduct(props.product))
             >
               <div class="flex items-center justify-between w-full">
                 <span>{{ variant ? Object.values(options).join(' / ') : 'Select Options' }}</span>
-                <UIcon name="i-lucide-chevron-down" class="w-4 h-4" />
+                <UIcon
+                  name="i-lucide-chevron-down"
+                  class="w-4 h-4"
+                />
               </div>
             </UButton>
             <UButton
@@ -94,16 +103,42 @@ const isSimple = computed(() => isSimpleProduct(props.product))
     <ClientOnly>
       <UModal v-model:open="isModalOpen">
         <template #content>
-          <div class="bg-white px-6 py-12">
-            <div v-if="(product.variants?.length ?? 0) > 1" class="flex flex-col gap-y-6">
-              <div v-for="option in (product.options || [])" :key="option.id">
-                <ProductOptionSelect
-                  :option="option"
-                  :current="options[option.id]"
-                  :title="option.title ?? ''"
-                  :disabled="optionsDisabled"
-                  @update="(optId, val) => emit('updateOptions', optId, val)"
-                />
+          <div
+            class="flex min-h-full h-full items-center justify-center text-center"
+            data-testid="mobile-actions-modal"
+          >
+            <div class="w-full h-full transform overflow-hidden text-left flex flex-col gap-y-3">
+              <div class="w-full flex justify-end pr-6 pt-6">
+                <button
+                  type="button"
+                  class="bg-white w-12 h-12 rounded-full text-ui-fg-base flex justify-center items-center"
+                  data-testid="close-modal-button"
+                  @click="isModalOpen = false"
+                >
+                  <UIcon
+                    name="i-lucide-x"
+                    class="w-5 h-5"
+                  />
+                </button>
+              </div>
+              <div class="bg-white px-6 py-12 w-full">
+                <div
+                  v-if="(product.variants?.length ?? 0) > 1"
+                  class="flex flex-col gap-y-6"
+                >
+                  <div
+                    v-for="option in (product.options || [])"
+                    :key="option.id"
+                  >
+                    <ProductOptionSelect
+                      :option="option"
+                      :current="options[option.id]"
+                      :title="option.title ?? ''"
+                      :disabled="optionsDisabled"
+                      @update="(optId, val) => emit('updateOptions', optId, val)"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

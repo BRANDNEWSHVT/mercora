@@ -14,19 +14,18 @@ const { data: relatedProducts } = useAsyncData(
     const region = await getRegion(props.countryCode)
     if (!region) return []
 
-    const query: Record<string, string | boolean> = {
+    const query: Record<string, string | boolean | string[]> = {
       region_id: region.id,
       is_giftcard: false,
       fields: '*variants.calculated_price'
     }
     if (props.product.collection_id) {
-      query.collection_id = props.product.collection_id
+      query.collection_id = [props.product.collection_id]
     }
     if (props.product.tags?.length) {
       query.tag_id = props.product.tags
         .map(tag => tag.id)
         .filter((id): id is string => Boolean(id))
-        .join(',')
     }
 
     const res = await $fetch<{ products?: HttpTypes.StoreProduct[] }>('/api/products', { query })
@@ -45,7 +44,7 @@ const { data: relatedProducts } = useAsyncData(
     </div>
     <ul class="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
       <li
-        v-for="p in relatedProducts.slice(0, 4)"
+        v-for="p in relatedProducts"
         :key="p.id"
       >
         <ProductPreview :product="p" />

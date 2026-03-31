@@ -8,7 +8,7 @@ const sortBy = computed<SortOptions>(() => (route.query.sortBy as SortOptions) |
 const page = computed(() => Number(route.query.page) || 1)
 
 const setSort = (value: SortOptions) => {
-  router.push({ query: { ...route.query, sortBy: value, page: '1' } })
+  router.push({ query: { ...route.query, sortBy: value } })
 }
 
 const setPage = (p: number) => {

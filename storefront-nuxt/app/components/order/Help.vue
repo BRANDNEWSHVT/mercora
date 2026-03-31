@@ -1,33 +1,21 @@
-<script setup lang="ts">
-const countryCode = useCountryCode()
-</script>
-
 <template>
-  <div class="border border-gray-200 rounded-lg p-6">
-    <h3 class="text-base-semi mb-2">
+  <div class="mt-6">
+    <h3 class="text-base-semi">
       Need help?
     </h3>
-    <div class="flex flex-col gap-y-2 text-small-regular text-ui-fg-subtle">
-      <NuxtLink
-        :to="`/${countryCode}/contact`"
-        class="flex items-center gap-x-2 hover:text-ui-fg-base transition-colors"
-      >
-        <UIcon
-          name="lucide:headphones"
-          class="size-4"
-        />
-        <span>Contact</span>
-      </NuxtLink>
-      <NuxtLink
-        :to="`/${countryCode}/content/returns`"
-        class="flex items-center gap-x-2 hover:text-ui-fg-base transition-colors"
-      >
-        <UIcon
-          name="lucide:package"
-          class="size-4"
-        />
-        <span>Returns &amp; Exchanges</span>
-      </NuxtLink>
+    <div class="text-base-regular my-2">
+      <ul class="gap-y-2 flex flex-col">
+        <li>
+          <CommonInteractiveLink href="/contact">
+            Contact
+          </CommonInteractiveLink>
+        </li>
+        <li>
+          <CommonInteractiveLink href="/contact">
+            Returns &amp; Exchanges
+          </CommonInteractiveLink>
+        </li>
+      </ul>
     </div>
   </div>
 </template>

@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import type { HttpTypes } from '@medusajs/types'
+
 const route = useRoute()
 const countryCode = computed(() => route.params.countryCode as string)
 
 const { data: collectionsData } = useAsyncData('footer-collections', () =>
-  $fetch('/api/collections', { query: { fields: '*products' } })
+  $fetch<HttpTypes.StoreCollection[]>('/api/collections', { query: { fields: '*products' } })
 )
 const { data: categoriesData } = useAsyncData('footer-categories', () =>
-  $fetch('/api/categories')
+  $fetch<HttpTypes.StoreProductCategory[]>('/api/categories')
 )
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const collections = computed(() => (collectionsData.value as any)?.collections ?? [])
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const categories = computed(() => (categoriesData.value as any)?.product_categories ?? [])
+const collections = computed(() => collectionsData.value ?? [])
+const categories = computed(() => categoriesData.value ?? [])
 </script>
 
 <template>

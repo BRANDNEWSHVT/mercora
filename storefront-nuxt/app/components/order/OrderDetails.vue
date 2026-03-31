@@ -16,7 +16,10 @@ const formatStatus = (str: string) => {
   <div>
     <p class="text-base-regular text-ui-fg-subtle">
       We have sent the order confirmation details to
-      <span class="text-ui-fg-medium-plus font-semibold" data-testid="order-email">{{ order.email }}</span>.
+      <span
+        class="text-ui-fg-medium-plus font-semibold"
+        data-testid="order-email"
+      >{{ order.email }}</span>.
     </p>
     <p class="mt-2">
       Order date: <span data-testid="order-date">{{ new Date(order.created_at).toDateString() }}</span>
@@ -27,10 +30,16 @@ const formatStatus = (str: string) => {
     <div class="flex items-center text-compact-small gap-x-4 mt-4">
       <template v-if="showStatus">
         <p>
-          Order status: <span class="text-ui-fg-subtle" data-testid="order-status">{{ formatStatus(order.fulfillment_status) }}</span>
+          Order status: <span
+            class="text-ui-fg-subtle"
+            data-testid="order-status"
+          >{{ formatStatus(order.fulfillment_status) }}</span>
         </p>
         <p>
-          Payment status: <span class="text-ui-fg-subtle" data-testid="order-payment-status">{{ formatStatus(order.payment_status) }}</span>
+          Payment status: <span
+            class="text-ui-fg-subtle"
+            data-testid="order-payment-status"
+          >{{ formatStatus(order.payment_status) }}</span>
         </p>
       </template>
     </div>

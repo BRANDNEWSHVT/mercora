@@ -38,15 +38,15 @@ const { data, pending } = useAsyncData(
     const region = await getRegion(countryCode.value)
     if (!region) return { products: [], count: 0 }
 
-    const query: Record<string, string | number> = {
+    const query: Record<string, string | number | string[]> = {
       region_id: region.id,
       fields: '*variants.calculated_price',
       limit: 100,
       offset: 0
     }
 
-    if (props.collectionId) query.collection_id = props.collectionId
-    if (props.categoryId) query.category_id = props.categoryId
+    if (props.collectionId) query.collection_id = [props.collectionId]
+    if (props.categoryId) query.category_id = [props.categoryId]
     if (props.sortBy === 'created_at') query.order = 'created_at'
 
     const response = await $fetch<{ products: HttpTypes.StoreProduct[], count: number }>('/api/products', { query })

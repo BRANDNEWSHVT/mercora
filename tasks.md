@@ -57,37 +57,37 @@
 
 ## Product And Store Module
 
-- [ ] Compare `storefront/src/modules/products/templates/index.tsx` with the Nuxt product page composition
-- [ ] Compare `storefront/src/modules/products/templates/product-info/index.tsx` with `storefront-nuxt/app/components/product/Info.vue`
-- [ ] Compare `storefront/src/modules/products/components/image-gallery/index.tsx` with `storefront-nuxt/app/components/product/ImageGallery.vue`
-- [ ] Compare `storefront/src/modules/products/components/product-actions/index.tsx` with `storefront-nuxt/app/components/product/Actions.vue`
-- [ ] Compare `storefront/src/modules/products/components/product-actions/mobile-actions.tsx` with `storefront-nuxt/app/components/product/MobileActions.vue`
-- [ ] Compare `storefront/src/modules/products/components/product-actions/option-select.tsx` with `storefront-nuxt/app/components/product/OptionSelect.vue`
-- [ ] Compare `storefront/src/modules/products/components/product-price/index.tsx` with `storefront-nuxt/app/components/product/Price.vue`
-- [ ] Compare `storefront/src/modules/products/components/product-preview/index.tsx` with `storefront-nuxt/app/components/product/Preview.vue`
-- [ ] Compare `storefront/src/modules/products/components/product-preview/price.tsx` with `storefront-nuxt/app/components/product/PreviewPrice.vue`
-- [ ] Compare `storefront/src/modules/products/components/product-tabs/index.tsx` with `storefront-nuxt/app/components/product/Tabs.vue`
-- [ ] Compare `storefront/src/modules/products/components/related-products/index.tsx` with `storefront-nuxt/app/components/product/RelatedProducts.vue`
-- [ ] Compare `storefront/src/modules/products/components/thumbnail/index.tsx` with `storefront-nuxt/app/components/product/Thumbnail.vue`
-- [ ] Compare `storefront/src/modules/store/templates/index.tsx` with `storefront-nuxt/app/components/store/StoreTemplate.vue`
-- [ ] Compare `storefront/src/modules/store/templates/paginated-products.tsx` with `storefront-nuxt/app/components/store/PaginatedProducts.vue`
-- [ ] Compare `storefront/src/modules/store/components/refinement-list/index.tsx` with `storefront-nuxt/app/components/store/RefinementList.vue`
-- [ ] Verify sort, pagination, query-param sync, and product-count behavior in store/category/collection views
+- [x] Compare `storefront/src/modules/products/templates/index.tsx` with the Nuxt product page composition
+- [x] Compare `storefront/src/modules/products/templates/product-info/index.tsx` with `storefront-nuxt/app/components/product/Info.vue`
+- [x] Compare `storefront/src/modules/products/components/image-gallery/index.tsx` with `storefront-nuxt/app/components/product/ImageGallery.vue`
+- [x] Compare `storefront/src/modules/products/components/product-actions/index.tsx` with `storefront-nuxt/app/components/product/Actions.vue`
+- [x] Compare `storefront/src/modules/products/components/product-actions/mobile-actions.tsx` with `storefront-nuxt/app/components/product/MobileActions.vue`
+- [x] Compare `storefront/src/modules/products/components/product-actions/option-select.tsx` with `storefront-nuxt/app/components/product/OptionSelect.vue`
+- [x] Compare `storefront/src/modules/products/components/product-price/index.tsx` with `storefront-nuxt/app/components/product/Price.vue`
+- [x] Compare `storefront/src/modules/products/components/product-preview/index.tsx` with `storefront-nuxt/app/components/product/Preview.vue`
+- [x] Compare `storefront/src/modules/products/components/product-preview/price.tsx` with `storefront-nuxt/app/components/product/PreviewPrice.vue`
+- [x] Compare `storefront/src/modules/products/components/product-tabs/index.tsx` with `storefront-nuxt/app/components/product/Tabs.vue`
+- [x] Compare `storefront/src/modules/products/components/related-products/index.tsx` with `storefront-nuxt/app/components/product/RelatedProducts.vue`
+- [x] Compare `storefront/src/modules/products/components/thumbnail/index.tsx` with `storefront-nuxt/app/components/product/Thumbnail.vue`
+- [x] Compare `storefront/src/modules/store/templates/index.tsx` with `storefront-nuxt/app/components/store/StoreTemplate.vue`
+- [x] Compare `storefront/src/modules/store/templates/paginated-products.tsx` with `storefront-nuxt/app/components/store/PaginatedProducts.vue`
+- [x] Compare `storefront/src/modules/store/components/refinement-list/index.tsx` with `storefront-nuxt/app/components/store/RefinementList.vue`
+- [x] Verify sort, pagination, query-param sync, and product-count behavior in store/category/collection views
 
 ## Order And Layout Module
 
-- [ ] Compare `storefront/src/modules/order/templates/order-completed-template.tsx` with `storefront-nuxt/app/components/order/CompletedTemplate.vue`
-- [ ] Compare `storefront/src/modules/order/templates/order-details-template.tsx` with `storefront-nuxt/app/components/order/DetailsTemplate.vue`
-- [ ] Compare `storefront/src/modules/order/components/order-details/index.tsx` with `storefront-nuxt/app/components/order/OrderDetails.vue`
-- [ ] Compare `storefront/src/modules/order/components/order-summary/index.tsx` with `storefront-nuxt/app/components/order/OrderSummary.vue`
-- [ ] Compare `storefront/src/modules/order/components/payment-details/index.tsx` with `storefront-nuxt/app/components/order/PaymentDetails.vue`
-- [ ] Compare `storefront/src/modules/order/components/shipping-details/index.tsx` with `storefront-nuxt/app/components/order/ShippingDetails.vue`
-- [ ] Compare `storefront/src/modules/order/components/transfer-actions/index.tsx` with `storefront-nuxt/app/components/order/TransferActions.vue`
-- [ ] Compare `storefront/src/modules/layout/templates/nav/index.tsx` with `storefront-nuxt/app/components/layout/Nav.vue`
-- [ ] Compare `storefront/src/modules/layout/components/side-menu/index.tsx` with `storefront-nuxt/app/components/layout/SideMenu.vue`
-- [ ] Compare `storefront/src/modules/layout/components/cart-dropdown/index.tsx` with `storefront-nuxt/app/components/layout/CartDropdown.vue`
-- [ ] Compare `storefront/src/modules/layout/components/country-select/index.tsx` with `storefront-nuxt/app/components/layout/CountrySelect.vue`
-- [ ] Compare `storefront/src/modules/layout/templates/footer/index.tsx` with `storefront-nuxt/app/components/layout/Footer.vue`
+- [x] Compare `storefront/src/modules/order/templates/order-completed-template.tsx` with `storefront-nuxt/app/components/order/CompletedTemplate.vue`
+- [x] Compare `storefront/src/modules/order/templates/order-details-template.tsx` with `storefront-nuxt/app/components/order/DetailsTemplate.vue`
+- [x] Compare `storefront/src/modules/order/components/order-details/index.tsx` with `storefront-nuxt/app/components/order/OrderDetails.vue`
+- [x] Compare `storefront/src/modules/order/components/order-summary/index.tsx` with `storefront-nuxt/app/components/order/OrderSummary.vue`
+- [x] Compare `storefront/src/modules/order/components/payment-details/index.tsx` with `storefront-nuxt/app/components/order/PaymentDetails.vue`
+- [x] Compare `storefront/src/modules/order/components/shipping-details/index.tsx` with `storefront-nuxt/app/components/order/ShippingDetails.vue`
+- [x] Compare `storefront/src/modules/order/components/transfer-actions/index.tsx` with `storefront-nuxt/app/components/order/TransferActions.vue`
+- [x] Compare `storefront/src/modules/layout/templates/nav/index.tsx` with `storefront-nuxt/app/components/layout/Nav.vue`
+- [x] Compare `storefront/src/modules/layout/components/side-menu/index.tsx` with `storefront-nuxt/app/components/layout/SideMenu.vue`
+- [x] Compare `storefront/src/modules/layout/components/cart-dropdown/index.tsx` with `storefront-nuxt/app/components/layout/CartDropdown.vue`
+- [x] Compare `storefront/src/modules/layout/components/country-select/index.tsx` with `storefront-nuxt/app/components/layout/CountrySelect.vue`
+- [x] Compare `storefront/src/modules/layout/templates/footer/index.tsx` with `storefront-nuxt/app/components/layout/Footer.vue`
 
 ## Data, API, And Utility Parity
 
