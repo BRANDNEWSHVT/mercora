@@ -14,6 +14,24 @@ export default defineEventHandler(async (event) => {
     )
     setCartId(event, cart.id)
     cartId = cart.id
+  } else if (body.region_id) {
+    const { cart } = await sdk.client.fetch<HttpTypes.StoreCartResponse>(
+      `/store/carts/${cartId}`,
+      {
+        method: 'GET',
+        headers,
+        cache: 'no-cache'
+      }
+    )
+
+    if (cart.region_id !== body.region_id) {
+      await sdk.store.cart.update(
+        cartId,
+        { region_id: body.region_id },
+        {},
+        headers
+      )
+    }
   }
 
   await sdk.store.cart.createLineItem(

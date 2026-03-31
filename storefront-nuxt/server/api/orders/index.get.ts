@@ -4,10 +4,11 @@ export default defineEventHandler(async (event) => {
   const sdk = useMedusaSdk()
   const query = getQuery(event)
   const headers = getAuthHeaders(event)
+  const { id, limit = 10, offset = 0, ...filters } = query
 
-  if (query.id) {
+  if (id) {
     const { order } = await sdk.client.fetch<HttpTypes.StoreOrderResponse>(
-      `/store/orders/${query.id}`,
+      `/store/orders/${id}`,
       {
         method: 'GET',
         query: {
@@ -25,10 +26,11 @@ export default defineEventHandler(async (event) => {
     {
       method: 'GET',
       query: {
-        limit: query.limit || 10,
-        offset: query.offset || 0,
+        limit,
+        offset,
         order: '-created_at',
-        fields: '*items,+items.metadata,*items.variant,*items.product'
+        fields: '*items,+items.metadata,*items.variant,*items.product',
+        ...filters
       },
       headers,
       cache: 'no-cache'

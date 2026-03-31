@@ -7,20 +7,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   const config = useRuntimeConfig()
-  const defaultRegion = config.public.defaultRegion || 'us'
-
-  // If at root, redirect to default country
-  if (to.path === '/') {
-    return navigateTo(`/${defaultRegion}`, { redirectCode: 307 })
-  }
+  const defaultRegion = (config.public.defaultRegion || 'us').toLowerCase()
+  const requestCountryCode = import.meta.server
+    ? useRequestHeaders(['x-vercel-ip-country'])['x-vercel-ip-country']?.toLowerCase()
+    : undefined
 
   // Check if URL has a valid country code as first segment
   const segments = to.path.split('/').filter(Boolean)
   const urlCountryCode = segments[0]?.toLowerCase()
-
-  if (!urlCountryCode) {
-    return navigateTo(`/${defaultRegion}`, { redirectCode: 307 })
-  }
 
   // Fetch regions to validate the country code
   try {
@@ -29,24 +23,28 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
     regions.forEach((region) => {
       region.countries?.forEach((c) => {
-        if (c.iso_2) validCountries.add(c.iso_2)
+        if (c.iso_2) validCountries.add(c.iso_2.toLowerCase())
       })
     })
 
-    // If the URL has a valid country code, allow navigation
-    if (validCountries.has(urlCountryCode)) {
+    if (urlCountryCode && validCountries.has(urlCountryCode)) {
       return
     }
 
-    // If not valid, redirect with default country code prepended
-    if (validCountries.has(defaultRegion)) {
-      return navigateTo(`/${defaultRegion}${to.path}`, { redirectCode: 307 })
-    }
-
-    // Use first available country
     const firstCountry = validCountries.values().next().value
-    if (firstCountry) {
-      return navigateTo(`/${firstCountry}${to.path}`, { redirectCode: 307 })
+    const countryCode = requestCountryCode && validCountries.has(requestCountryCode)
+      ? requestCountryCode
+      : validCountries.has(defaultRegion)
+        ? defaultRegion
+        : firstCountry
+
+    if (countryCode) {
+      const queryAndHash = to.fullPath.slice(to.path.length)
+      const redirectPath = to.path === '/' ? '' : to.path
+
+      return navigateTo(`/${countryCode}${redirectPath}${queryAndHash}`, {
+        redirectCode: 307
+      })
     }
   } catch {
     // If we can't fetch regions, just let it through

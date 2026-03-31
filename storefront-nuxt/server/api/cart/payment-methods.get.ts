@@ -5,10 +5,14 @@ export default defineEventHandler(async (event) => {
   if (!regionId) return []
 
   const sdk = useMedusaSdk()
+  const headers = getAuthHeaders(event)
   const { payment_providers } = await sdk.client.fetch<{
     payment_providers: HttpTypes.StorePaymentProvider[]
   }>('/store/payment-providers', {
-    query: { region_id: regionId as string }
+    method: 'GET',
+    query: { region_id: regionId as string },
+    headers,
+    cache: 'force-cache'
   })
 
   return payment_providers.sort((a, b) => {

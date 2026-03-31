@@ -51,7 +51,10 @@ const flagEmoji = (value: string) => {
 }
 
 const handleChange = async (option: CountryOption) => {
-  const currentPath = route.path.split(`/${countryCode.value}`)[1] || ''
+  const currentPrefix = `/${countryCode.value}`
+  const currentPath = route.fullPath.startsWith(currentPrefix)
+    ? route.fullPath.slice(currentPrefix.length)
+    : route.fullPath
   const existingCart = cart.value ?? await fetchCart()
   const nextRegion = await getRegion(option.country)
 
@@ -59,7 +62,7 @@ const handleChange = async (option: CountryOption) => {
     await updateCart({ region_id: nextRegion.id })
   }
 
-  navigateTo(`/${option.country}${currentPath}`)
+  navigateTo(`/${option.country}${currentPath || ''}`)
   isOpen.value = false
 }
 </script>

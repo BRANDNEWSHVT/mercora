@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { customer } = useCustomer()
+const { customer, loading } = useCustomer()
 
 const currentView = ref<'sign-in' | 'register'>('sign-in')
 </script>
@@ -12,7 +12,15 @@ const currentView = ref<'sign-in' | 'register'>('sign-in')
     <div
       class="flex-1 content-container h-full max-w-5xl mx-auto bg-white flex flex-col"
     >
-      <template v-if="customer">
+      <template v-if="loading && !customer">
+        <div class="flex min-h-[40vh] items-center justify-center text-ui-fg-subtle">
+          <UIcon
+            name="i-lucide-loader-2"
+            class="h-8 w-8 animate-spin"
+          />
+        </div>
+      </template>
+      <template v-else-if="customer">
         <div class="grid grid-cols-1 small:grid-cols-[240px_1fr] py-12">
           <div>
             <AccountNav />

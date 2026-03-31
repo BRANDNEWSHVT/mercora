@@ -91,22 +91,22 @@
 
 ## Data, API, And Utility Parity
 
-- [ ] Audit `storefront/src/lib/data/*` usage against `storefront-nuxt/server/api/*` coverage
-- [ ] Verify all Medusa query fields in Nuxt server routes match the Next.js source requirements
-- [ ] Re-check cart server handlers for parameter shapes and auth headers
-- [ ] Re-check order server handlers for list/detail parity
-- [ ] Re-check product server handler for filtering, region, tags, and collection behavior
-- [ ] Re-check region bootstrap and default-region redirect behavior
-- [ ] Audit shared utility parity: money, compare-addresses, sort-products, get-product-price, product helpers
+- [x] Audit `storefront/src/lib/data/*` usage against `storefront-nuxt/server/api/*` coverage
+- [x] Verify all Medusa query fields in Nuxt server routes match the Next.js source requirements
+- [x] Re-check cart server handlers for parameter shapes and auth headers
+- [x] Re-check order server handlers for list/detail parity
+- [x] Re-check product server handler for filtering, region, tags, and collection behavior
+- [x] Re-check region bootstrap and default-region redirect behavior
+- [x] Audit shared utility parity: money, compare-addresses, sort-products, get-product-price, product helpers
 
 ## UX And State Completeness
 
-- [ ] Verify every migrated page has correct loading state
-- [ ] Verify every migrated page has correct empty state
-- [ ] Verify every migrated page has correct error state
-- [ ] Verify responsive behavior on mobile and desktop for cart, checkout, account, and product pages
-- [ ] Verify internal links use locale-aware routing consistently
-- [ ] Verify no remaining broken navigation paths exist in `storefront-nuxt`
+- [x] Verify every migrated page has correct loading state
+- [x] Verify every migrated page has correct empty state
+- [x] Verify every migrated page has correct error state
+- [x] Verify responsive behavior on mobile and desktop for cart, checkout, account, and product pages
+- [x] Verify internal links use locale-aware routing consistently
+- [x] Verify no remaining broken navigation paths exist in `storefront-nuxt`
 
 ## Validation
 

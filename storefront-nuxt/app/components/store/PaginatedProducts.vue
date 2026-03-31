@@ -32,7 +32,7 @@ const queryKey = computed(() => {
   return `products-${props.sortBy}-${props.page}-${props.collectionId || ''}-${props.categoryId || ''}-${countryCode.value}`
 })
 
-const { data, pending } = useAsyncData(
+const { data, pending, error, refresh } = useAsyncData(
   queryKey,
   async (): Promise<{ products: HttpTypes.StoreProduct[], count: number }> => {
     const region = await getRegion(countryCode.value)
@@ -88,8 +88,28 @@ const visiblePages = computed(() => {
 
 <template>
   <div>
+    <div
+      v-if="error"
+      class="rounded-xl border border-rose-200 bg-rose-50 px-6 py-8 text-center text-sm text-rose-700"
+      data-testid="products-list-error"
+    >
+      <p class="font-medium">
+        We couldn't load products right now.
+      </p>
+      <p class="mt-2 text-rose-600">
+        Try again or adjust your filters.
+      </p>
+      <UButton
+        variant="outline"
+        color="neutral"
+        class="mt-4"
+        @click="() => refresh()"
+      >
+        Retry
+      </UButton>
+    </div>
     <ul
-      v-if="pending"
+      v-else-if="pending"
       class="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8 flex-1"
       data-testid="products-list-loader"
     >
@@ -119,7 +139,7 @@ const visiblePages = computed(() => {
       </li>
     </ul>
     <div
-      v-if="products.length === 0 && !pending"
+      v-if="products.length === 0 && !pending && !error"
       class="py-16 text-center text-ui-fg-subtle"
     >
       No products found.
