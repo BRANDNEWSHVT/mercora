@@ -138,7 +138,7 @@ input[type="search"]::-webkit-search-results-decoration {
 .rounded-large { border-radius: 1rem; }
 .rounded-soft { border-radius: 2px; }
 
-/* Custom breakpoints matching Next.js storefront config */
+/* Custom breakpoints matching the source storefront config */
 @custom-variant small (@media (min-width: 1024px));
 @custom-variant medium (@media (min-width: 1280px));
 @custom-variant xsmall (@media (min-width: 512px));

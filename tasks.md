@@ -110,10 +110,11 @@
 
 ## Validation
 
-- [ ] Run full manual browser test for home, store, category, collection, product, cart, checkout, account, and order routes
-- [ ] Verify login, register, logout, address CRUD, and account profile update flows end to end
-- [ ] Verify add-to-cart, cart update, shipping selection, payment selection, and place-order flows end to end
-- [ ] Verify order history, order detail, order confirmation, and transfer flows end to end
-- [ ] Run `pnpm typecheck` after each parity batch
-- [ ] Run targeted ESLint on touched files after each parity batch
-- [ ] Decide whether to clean the unrelated repo-wide lint backlog under `.claude/`, `.github/hooks/`, and other non-migration files
+- [x] Ensure every label that contains Next.js or React is updated to Nuxt and Vue where applicable
+- [x] Run full manual browser test for home, store, category, collection, product, cart, checkout, account, and order routes
+- [x] Verify login, register, logout, address CRUD, and account profile update flows end to end
+- [x] Verify add-to-cart, cart update, shipping selection, payment selection, and place-order flows end to end
+- [x] Verify order history, order detail, order confirmation, and transfer flows end to end
+- [x] Run `pnpm typecheck` after each parity batch
+- [x] Run targeted ESLint on touched files after each parity batch
+- [x] Decide whether to clean the unrelated repo-wide lint backlog under `.claude/`, `.github/hooks/`, and other non-migration files
