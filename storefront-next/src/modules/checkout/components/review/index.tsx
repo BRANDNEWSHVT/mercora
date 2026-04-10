@@ -5,10 +5,17 @@ import { Heading, Text, clx } from "@medusajs/ui"
 import PaymentButton from "../payment-button"
 import { useSearchParams } from "next/navigation"
 
-const Review = ({ cart }: { cart: any }) => {
+const Review = ({
+  cart,
+  initialStep,
+}: {
+  cart: any
+  initialStep?: string
+}) => {
   const searchParams = useSearchParams()
 
-  const isOpen = searchParams.get("step") === "review"
+  const step = searchParams.get("step") || initialStep || "address"
+  const isOpen = step === "review"
 
   const paidByGiftcard =
     cart?.gift_cards && cart?.gift_cards?.length > 0 && cart?.total === 0

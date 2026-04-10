@@ -17,8 +17,15 @@ const AccountNav = ({
 }: {
   customer: HttpTypes.StoreCustomer | null
 }) => {
-  const route = usePathname()
-  const { countryCode } = useParams() as { countryCode: string }
+  const pathname = usePathname()
+  const browserRoute =
+    typeof window !== "undefined" ? window.location.pathname : ""
+  const route = pathname && pathname !== "/" ? pathname : browserRoute
+  const params = useParams()
+  const countryCode =
+    typeof params?.countryCode === "string"
+      ? params.countryCode
+      : route?.split("/").filter(Boolean)[0] || ""
 
   const handleLogout = async () => {
     await signout(countryCode)
@@ -180,7 +187,11 @@ const AccountNavLink = ({
   children,
   "data-testid": dataTestId,
 }: AccountNavLinkProps) => {
-  const { countryCode }: { countryCode: string } = useParams()
+  const params = useParams()
+  const countryCode =
+    typeof params?.countryCode === "string"
+      ? params.countryCode
+      : route.split("/").filter(Boolean)[0] || ""
 
   const active = route.split(countryCode)[1] === href
   return (

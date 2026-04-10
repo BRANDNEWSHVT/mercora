@@ -1,9 +1,9 @@
-const checkEnvVariables = require("./check-env-variables")
+import checkEnvVariables from "./check-env-variables.mjs"
 
 checkEnvVariables()
 
 /**
- * @type {import('next').NextConfig}
+ * @type {import("vinext").NextConfig}
  */
 const nextConfig = {
   reactStrictMode: true,
@@ -11,6 +11,9 @@ const nextConfig = {
     fetches: {
       fullUrl: true,
     },
+  },
+  experimental: {
+    optimizePackageImports: ["@medusajs/ui"],
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -40,4 +43,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+export default nextConfig

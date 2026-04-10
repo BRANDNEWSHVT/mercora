@@ -44,7 +44,7 @@ export default async function OrderCompletedTemplate({
           <CartTotals totals={order} />
           <ShippingDetails order={order} />
           <PaymentDetails order={order} />
-          <Help />
+          <Help countryCode={order.shipping_address?.country_code} />
         </div>
       </div>
     </div>

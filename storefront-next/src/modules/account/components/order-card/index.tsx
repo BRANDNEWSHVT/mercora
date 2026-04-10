@@ -8,9 +8,10 @@ import { HttpTypes } from "@medusajs/types"
 
 type OrderCardProps = {
   order: HttpTypes.StoreOrder
+  countryCode: string
 }
 
-const OrderCard = ({ order }: OrderCardProps) => {
+const OrderCard = ({ order, countryCode }: OrderCardProps) => {
   const numberOfLines = useMemo(() => {
     return (
       order.items?.reduce((acc, item) => {
@@ -74,7 +75,10 @@ const OrderCard = ({ order }: OrderCardProps) => {
         )}
       </div>
       <div className="flex justify-end">
-        <LocalizedClientLink href={`/account/orders/details/${order.id}`}>
+        <LocalizedClientLink
+          href={`/account/orders/details/${order.id}`}
+          countryCode={countryCode}
+        >
           <Button data-testid="order-details-link" variant="secondary">
             See details
           </Button>

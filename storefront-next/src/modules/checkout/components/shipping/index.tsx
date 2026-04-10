@@ -11,17 +11,41 @@ import ErrorMessage from "@modules/checkout/components/error-message"
 import Divider from "@modules/common/components/divider"
 import MedusaRadio from "@modules/common/components/radio"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 const PICKUP_OPTION_ON = "__PICKUP_ON"
 const PICKUP_OPTION_OFF = "__PICKUP_OFF"
 
 type ShippingProps = {
   cart: HttpTypes.StoreCart
-  availableShippingMethods: HttpTypes.StoreCartShippingOption[] | null
+  availableShippingMethods:
+    | (HttpTypes.StoreCartShippingOption & {
+        service_zone?: {
+          fulfillment_set?: {
+            type?: string
+            location?: {
+              address?: {
+                address_1?: string | null
+                address_2?: string | null
+                postal_code?: string | null
+                city?: string | null
+                country_code?: string | null
+              } | null
+            } | null
+          } | null
+        } | null
+      })[]
+    | null
+  initialStep?: string
 }
 
-function formatAddress(address) {
+function formatAddress(address?: {
+  address_1?: string | null
+  address_2?: string | null
+  postal_code?: string | null
+  city?: string | null
+  country_code?: string | null
+} | null) {
   if (!address) {
     return ""
   }
@@ -50,6 +74,7 @@ function formatAddress(address) {
 const Shipping: React.FC<ShippingProps> = ({
   cart,
   availableShippingMethods,
+  initialStep,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingPrices, setIsLoadingPrices] = useState(true)
@@ -68,14 +93,28 @@ const Shipping: React.FC<ShippingProps> = ({
   const router = useRouter()
   const pathname = usePathname()
 
-  const isOpen = searchParams.get("step") === "delivery"
+  const step = searchParams.get("step") || initialStep || "address"
+  const isOpen = step === "delivery"
+  const shippingMethods = useMemo(
+    () => availableShippingMethods ?? [],
+    [availableShippingMethods]
+  )
+  const currentShippingMethod = cart.shipping_methods?.at(-1)
 
-  const _shippingMethods = availableShippingMethods?.filter(
-    (sm) => sm.service_zone?.fulfillment_set?.type !== "pickup"
+  const _shippingMethods = useMemo(
+    () =>
+      shippingMethods.filter(
+        (sm) => sm.service_zone?.fulfillment_set?.type !== "pickup"
+      ),
+    [shippingMethods]
   )
 
-  const _pickupMethods = availableShippingMethods?.filter(
-    (sm) => sm.service_zone?.fulfillment_set?.type === "pickup"
+  const _pickupMethods = useMemo(
+    () =>
+      shippingMethods.filter(
+        (sm) => sm.service_zone?.fulfillment_set?.type === "pickup"
+      ),
+    [shippingMethods]
   )
 
   const hasPickupOptions = !!_pickupMethods?.length
@@ -83,7 +122,7 @@ const Shipping: React.FC<ShippingProps> = ({
   useEffect(() => {
     setIsLoadingPrices(true)
 
-    if (_shippingMethods?.length) {
+    if (_shippingMethods.length) {
       const promises = _shippingMethods
         .filter((sm) => sm.price_type === "calculated")
         .map((sm) => calculatePriceForShippingOption(sm.id, cart.id))
@@ -91,20 +130,26 @@ const Shipping: React.FC<ShippingProps> = ({
       if (promises.length) {
         Promise.allSettled(promises).then((res) => {
           const pricesMap: Record<string, number> = {}
-          res
-            .filter((r) => r.status === "fulfilled")
-            .forEach((p) => (pricesMap[p.value?.id || ""] = p.value?.amount!))
+          res.forEach((result) => {
+            if (result.status === "fulfilled" && result.value?.id) {
+              pricesMap[result.value.id] = result.value.amount
+            }
+          })
 
           setCalculatedPricesMap(pricesMap)
           setIsLoadingPrices(false)
         })
+      } else {
+        setIsLoadingPrices(false)
       }
+    } else {
+      setIsLoadingPrices(false)
     }
 
-    if (_pickupMethods?.find((m) => m.id === shippingMethodId)) {
+    if (_pickupMethods.find((m) => m.id === shippingMethodId)) {
       setShowPickupOptions(PICKUP_OPTION_ON)
     }
-  }, [availableShippingMethods])
+  }, [_pickupMethods, _shippingMethods, cart.id, shippingMethodId])
 
   const handleEdit = () => {
     router.push(pathname + "?step=delivery", { scroll: false })
@@ -232,10 +277,14 @@ const Shipping: React.FC<ShippingProps> = ({
                     </Radio>
                   </RadioGroup>
                 )}
-                <RadioGroup
-                  value={shippingMethodId}
-                  onChange={(v) => handleSetShippingMethod(v, "shipping")}
-                >
+                  <RadioGroup
+                    value={shippingMethodId}
+                    onChange={(value) => {
+                      if (value) {
+                        handleSetShippingMethod(value, "shipping")
+                      }
+                    }}
+                  >
                   {_shippingMethods?.map((option) => {
                     const isDisabled =
                       option.price_type === "calculated" &&
@@ -305,7 +354,11 @@ const Shipping: React.FC<ShippingProps> = ({
                 <div className="pb-8 md:pt-0 pt-2">
                   <RadioGroup
                     value={shippingMethodId}
-                    onChange={(v) => handleSetShippingMethod(v, "pickup")}
+                    onChange={(value) => {
+                      if (value) {
+                        handleSetShippingMethod(value, "pickup")
+                      }
+                    }}
                   >
                     {_pickupMethods?.map((option) => {
                       return (
@@ -381,11 +434,12 @@ const Shipping: React.FC<ShippingProps> = ({
                   Method
                 </Text>
                 <Text className="txt-medium text-ui-fg-subtle">
-                  {cart.shipping_methods?.at(-1)?.name}{" "}
-                  {convertToLocale({
-                    amount: cart.shipping_methods.at(-1)?.amount!,
-                    currency_code: cart?.currency_code,
-                  })}
+                  {currentShippingMethod?.name}{" "}
+                  {currentShippingMethod &&
+                    convertToLocale({
+                      amount: currentShippingMethod.amount,
+                      currency_code: cart.currency_code,
+                    })}
                 </Text>
               </div>
             )}

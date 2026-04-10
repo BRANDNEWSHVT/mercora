@@ -19,10 +19,14 @@ import { Fragment, useEffect, useRef, useState } from "react"
 
 const CartDropdown = ({
   cart: cartState,
+  countryCode,
 }: {
   cart?: HttpTypes.StoreCart | null
+  countryCode?: string
 }) => {
-  const [activeTimer, setActiveTimer] = useState<NodeJS.Timer | undefined>(
+  const [activeTimer, setActiveTimer] = useState<
+    ReturnType<typeof setTimeout> | undefined
+  >(
     undefined
   )
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false)
@@ -84,6 +88,7 @@ const CartDropdown = ({
           <LocalizedClientLink
             className="hover:text-ui-fg-base"
             href="/cart"
+            countryCode={countryCode}
             data-testid="nav-cart-link"
           >{`Cart (${totalItems})`}</LocalizedClientLink>
         </PopoverButton>
@@ -122,6 +127,7 @@ const CartDropdown = ({
                       >
                         <LocalizedClientLink
                           href={`/products/${item.product_handle}`}
+                          countryCode={countryCode}
                           className="w-24"
                         >
                           <Thumbnail
@@ -137,6 +143,7 @@ const CartDropdown = ({
                                 <h3 className="text-base-regular overflow-hidden text-ellipsis">
                                   <LocalizedClientLink
                                     href={`/products/${item.product_handle}`}
+                                    countryCode={countryCode}
                                     data-testid="product-link"
                                   >
                                     {item.title}
@@ -191,7 +198,11 @@ const CartDropdown = ({
                       })}
                     </span>
                   </div>
-                  <LocalizedClientLink href="/cart" passHref>
+                  <LocalizedClientLink
+                    href="/cart"
+                    countryCode={countryCode}
+                    passHref
+                  >
                     <Button
                       className="w-full"
                       size="large"
@@ -210,7 +221,10 @@ const CartDropdown = ({
                   </div>
                   <span>Your shopping bag is empty.</span>
                   <div>
-                    <LocalizedClientLink href="/store">
+                    <LocalizedClientLink
+                      href="/store"
+                      countryCode={countryCode}
+                    >
                       <>
                         <span className="sr-only">Go to all products page</span>
                         <Button onClick={close}>Explore products</Button>

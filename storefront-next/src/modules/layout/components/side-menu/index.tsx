@@ -16,7 +16,13 @@ const SideMenuItems = {
   Cart: "/cart",
 }
 
-const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
+const SideMenu = ({
+  regions,
+  countryCode,
+}: {
+  regions: HttpTypes.StoreRegion[] | null
+  countryCode?: string
+}) => {
   const toggleState = useToggleState()
 
   return (
@@ -60,6 +66,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                           <li key={name}>
                             <LocalizedClientLink
                               href={href}
+                              countryCode={countryCode}
                               className="text-3xl leading-10 hover:text-ui-fg-disabled"
                               onClick={close}
                               data-testid={`${name.toLowerCase()}-link`}

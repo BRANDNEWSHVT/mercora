@@ -27,10 +27,7 @@ type CountrySelectProps = {
 }
 
 const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
-  const [current, setCurrent] = useState<
-    | { country: string | undefined; region: string; label: string | undefined }
-    | undefined
-  >(undefined)
+  const [current, setCurrent] = useState<CountryOption | undefined>(undefined)
 
   const { countryCode } = useParams()
   const currentPath = usePathname().split(`/${countryCode}`)[1]
@@ -47,6 +44,9 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
         }))
       })
       .flat()
+      .filter((option): option is CountryOption => {
+        return !!option?.country && !!option.label
+      })
       .sort((a, b) => (a?.label ?? "").localeCompare(b?.label ?? ""))
   }, [regions])
 

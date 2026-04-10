@@ -8,9 +8,10 @@ import { HttpTypes } from "@medusajs/types"
 type OverviewProps = {
   customer: HttpTypes.StoreCustomer | null
   orders: HttpTypes.StoreOrder[] | null
+  countryCode: string
 }
 
-const Overview = ({ customer, orders }: OverviewProps) => {
+const Overview = ({ customer, orders, countryCode }: OverviewProps) => {
   return (
     <div data-testid="overview-page-wrapper">
       <div className="hidden small:block">
@@ -83,6 +84,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                       >
                         <LocalizedClientLink
                           href={`/account/orders/details/${order.id}`}
+                          countryCode={countryCode}
                         >
                           <Container className="bg-gray-50 flex justify-between items-center p-4">
                             <div className="grid grid-cols-3 grid-rows-2 text-small-regular gap-x-4 flex-1">

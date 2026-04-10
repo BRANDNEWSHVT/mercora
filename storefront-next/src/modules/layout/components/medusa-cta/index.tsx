@@ -1,7 +1,6 @@
 import { Text } from "@medusajs/ui"
 
 import Medusa from "../../../common/icons/medusa"
-import NextJs from "../../../common/icons/nextjs"
 
 const MedusaCTA = () => {
   return (
@@ -11,8 +10,8 @@ const MedusaCTA = () => {
         <Medusa fill="#9ca3af" className="fill-[#9ca3af]" />
       </a>
       &
-      <a href="https://nextjs.org" target="_blank" rel="noreferrer">
-        <NextJs fill="#9ca3af" />
+      <a href="https://github.com/cloudflare/vinext" target="_blank" rel="noreferrer">
+        Vinext
       </a>
     </Text>
   )

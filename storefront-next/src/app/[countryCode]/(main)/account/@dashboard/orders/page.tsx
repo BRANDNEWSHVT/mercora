@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   description: "Overview of your previous orders.",
 }
 
-export default async function Orders() {
+export default async function Orders(props: {
+  params: Promise<{ countryCode: string }>
+}) {
+  const params = await props.params
   const orders = await listOrders()
 
   if (!orders) {
@@ -28,7 +31,7 @@ export default async function Orders() {
         </p>
       </div>
       <div>
-        <OrderOverview orders={orders} />
+        <OrderOverview orders={orders} countryCode={params.countryCode} />
         <Divider className="my-16" />
         <TransferRequestForm />
       </div>

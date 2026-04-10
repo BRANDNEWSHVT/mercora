@@ -1,20 +1,24 @@
+import Link from "next/link"
 import { Heading } from "@medusajs/ui"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import React from "react"
 
-const Help = () => {
+type HelpProps = {
+  countryCode?: string | null
+}
+
+const Help = ({ countryCode }: HelpProps) => {
+  const helpHref = countryCode ? `/${countryCode}/contact` : "/contact"
+
   return (
     <div className="mt-6">
       <Heading className="text-base-semi">Need help?</Heading>
       <div className="text-base-regular my-2">
         <ul className="gap-y-2 flex flex-col">
           <li>
-            <LocalizedClientLink href="/contact">Contact</LocalizedClientLink>
+            <Link href={helpHref}>Contact</Link>
           </li>
           <li>
-            <LocalizedClientLink href="/contact">
-              Returns & Exchanges
-            </LocalizedClientLink>
+            <Link href={helpHref}>Returns & Exchanges</Link>
           </li>
         </ul>
       </div>

@@ -6,7 +6,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
 
-export default async function Nav() {
+export default async function Nav({ countryCode }: { countryCode?: string }) {
   const regions = await listRegions().then((regions: StoreRegion[]) => regions)
 
   return (
@@ -15,13 +15,14 @@ export default async function Nav() {
         <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
           <div className="flex-1 basis-0 h-full flex items-center">
             <div className="h-full">
-              <SideMenu regions={regions} />
+              <SideMenu regions={regions} countryCode={countryCode} />
             </div>
           </div>
 
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
+              countryCode={countryCode}
               className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
               data-testid="nav-store-link"
             >
@@ -34,6 +35,7 @@ export default async function Nav() {
               <LocalizedClientLink
                 className="hover:text-ui-fg-base"
                 href="/account"
+                countryCode={countryCode}
                 data-testid="nav-account-link"
               >
                 Account
@@ -44,13 +46,14 @@ export default async function Nav() {
                 <LocalizedClientLink
                   className="hover:text-ui-fg-base flex gap-2"
                   href="/cart"
+                  countryCode={countryCode}
                   data-testid="nav-cart-link"
                 >
                   Cart (0)
                 </LocalizedClientLink>
               }
             >
-              <CartButton />
+              <CartButton countryCode={countryCode} />
             </Suspense>
           </div>
         </nav>

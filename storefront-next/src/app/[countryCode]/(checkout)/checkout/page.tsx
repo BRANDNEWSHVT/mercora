@@ -10,7 +10,13 @@ export const metadata: Metadata = {
   title: "Checkout",
 }
 
-export default async function Checkout() {
+type Props = {
+  searchParams: Promise<{
+    step?: string
+  }>
+}
+
+export default async function Checkout(props: Props) {
   const cart = await retrieveCart()
 
   if (!cart) {
@@ -18,11 +24,16 @@ export default async function Checkout() {
   }
 
   const customer = await retrieveCustomer()
+  const searchParams = await props.searchParams
 
   return (
     <div className="grid grid-cols-1 small:grid-cols-[1fr_416px] content-container gap-x-40 py-12">
       <PaymentWrapper cart={cart}>
-        <CheckoutForm cart={cart} customer={customer} />
+        <CheckoutForm
+          cart={cart}
+          customer={customer}
+          initialStep={searchParams.step}
+        />
       </PaymentWrapper>
       <CheckoutSummary cart={cart} />
     </div>

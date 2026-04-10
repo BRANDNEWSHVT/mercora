@@ -9,11 +9,11 @@
 </p>
 
 <h1 align="center">
-  Medusa Next.js Starter Template
+  Medusa Vinext Starter Template
 </h1>
 
 <p align="center">
-Combine Medusa's modules for your commerce backend with the newest Next.js 15 features for a performant storefront.</p>
+Combine Medusa's modules for your commerce backend with Vinext for a performant storefront.</p>
 
 <p align="center">
   <a href="https://github.com/medusajs/medusa/blob/master/CONTRIBUTING.md">
@@ -29,7 +29,7 @@ Combine Medusa's modules for your commerce backend with the newest Next.js 15 fe
 
 ### Prerequisites
 
-To use the [Next.js Starter Template](https://medusajs.com/nextjs-commerce/), you should have a Medusa server running locally on port 9000.
+To use this Vinext storefront starter, you should have a Medusa server running locally on port 9000.
 For a quick setup, run:
 
 ```shell
@@ -40,9 +40,9 @@ Check out [create-medusa-app docs](https://docs.medusajs.com/learn/installation)
 
 # Overview
 
-The Medusa Next.js Starter is built with:
+The Medusa Vinext Starter is built with:
 
-- [Next.js](https://nextjs.org/)
+- [Vinext](https://github.com/cloudflare/vinext)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Typescript](https://www.typescriptlang.org/)
 - [Medusa](https://medusajs.com/)
@@ -57,13 +57,12 @@ Features include:
   - Checkout with Stripe
   - User Accounts
   - Order Details
-- Full Next.js 15 support:
+- Full Vinext app-router support:
   - App Router
-  - Next fetching/caching
   - Server Components
   - Server Actions
   - Streaming
-  - Static Pre-Rendering
+  - Static pre-rendering
 
 # Quickstart
 
@@ -72,7 +71,7 @@ Features include:
 Navigate into your projects directory and get your environment variables ready:
 
 ```shell
-cd nextjs-starter-medusa/
+cd storefront-next/
 mv .env.template .env.local
 ```
 
@@ -118,8 +117,6 @@ You'll also need to setup the integrations in your Medusa server. See the [Medus
 - [GitHub](https://github.com/medusajs)
 - [Documentation](https://docs.medusajs.com/)
 
-## Learn more about Next.js
+## Learn more about Vinext
 
-- [Website](https://nextjs.org/)
-- [GitHub](https://github.com/vercel/next.js)
-- [Documentation](https://nextjs.org/docs)
+- [GitHub](https://github.com/cloudflare/vinext)

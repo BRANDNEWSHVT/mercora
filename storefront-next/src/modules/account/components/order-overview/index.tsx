@@ -6,7 +6,13 @@ import OrderCard from "../order-card"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 
-const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
+const OrderOverview = ({
+  orders,
+  countryCode,
+}: {
+  orders: HttpTypes.StoreOrder[]
+  countryCode: string
+}) => {
   if (orders?.length) {
     return (
       <div className="flex flex-col gap-y-8 w-full">
@@ -15,7 +21,7 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
             key={o.id}
             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
           >
-            <OrderCard order={o} />
+            <OrderCard order={o} countryCode={countryCode} />
           </div>
         ))}
       </div>
@@ -32,7 +38,7 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
         You don&apos;t have any orders yet, let us change that {":)"}
       </p>
       <div className="mt-4">
-        <LocalizedClientLink href="/" passHref>
+        <LocalizedClientLink href="/" countryCode={countryCode} passHref>
           <Button data-testid="continue-shopping-button">
             Continue shopping
           </Button>

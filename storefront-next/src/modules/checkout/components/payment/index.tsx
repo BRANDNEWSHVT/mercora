@@ -16,9 +16,11 @@ import { useCallback, useEffect, useState } from "react"
 const Payment = ({
   cart,
   availablePaymentMethods,
+  initialStep,
 }: {
   cart: any
   availablePaymentMethods: any[]
+  initialStep?: string
 }) => {
   const activeSession = cart.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
@@ -36,7 +38,8 @@ const Payment = ({
   const router = useRouter()
   const pathname = usePathname()
 
-  const isOpen = searchParams.get("step") === "payment"
+  const step = searchParams.get("step") || initialStep || "address"
+  const isOpen = step === "payment"
 
   const isStripe = isStripeFunc(selectedPaymentMethod)
 

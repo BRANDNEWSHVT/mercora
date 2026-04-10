@@ -5,7 +5,11 @@ import { Text, clx } from "@medusajs/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import MedusaCTA from "@modules/layout/components/medusa-cta"
 
-export default async function Footer() {
+export default async function Footer({
+  countryCode,
+}: {
+  countryCode?: string
+}) {
   const { collections } = await listCollections({
     fields: "*products",
   })
@@ -18,6 +22,7 @@ export default async function Footer() {
           <div>
             <LocalizedClientLink
               href="/"
+              countryCode={countryCode}
               className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
             >
               Medusa Store
@@ -56,6 +61,7 @@ export default async function Footer() {
                             children && "txt-small-plus"
                           )}
                           href={`/categories/${c.handle}`}
+                          countryCode={countryCode}
                           data-testid="category-link"
                         >
                           {c.name}
@@ -68,6 +74,7 @@ export default async function Footer() {
                                   <LocalizedClientLink
                                     className="hover:text-ui-fg-base"
                                     href={`/categories/${child.handle}`}
+                                    countryCode={countryCode}
                                     data-testid="category-link"
                                   >
                                     {child.name}
@@ -100,6 +107,7 @@ export default async function Footer() {
                       <LocalizedClientLink
                         className="hover:text-ui-fg-base"
                         href={`/collections/${c.handle}`}
+                        countryCode={countryCode}
                       >
                         {c.title}
                       </LocalizedClientLink>
@@ -133,12 +141,12 @@ export default async function Footer() {
                 </li>
                 <li>
                   <a
-                    href="https://github.com/medusajs/nextjs-starter-medusa"
+                    href="https://github.com/cloudflare/vinext"
                     target="_blank"
                     rel="noreferrer"
                     className="hover:text-ui-fg-base"
                   >
-                    Source code
+                    Vinext
                   </a>
                 </li>
               </ul>
