@@ -1,122 +1,179 @@
-<p align="center">
-  <a href="https://www.medusajs.com">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/59018053/229103275-b5e482bb-4601-46e6-8142-244f531cebdb.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    <img alt="Medusa logo" src="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    </picture>
-  </a>
-</p>
+# Medusa Vinext Storefront
 
-<h1 align="center">
-  Medusa Vinext Starter Template
-</h1>
+Vinext-based Medusa storefront for the `mercora` repo. This app keeps the App Router structure from the old Next.js storefront, but the runtime, build, lint, and start flow now run on Vinext.
 
-<p align="center">
-Combine Medusa's modules for your commerce backend with Vinext for a performant storefront.</p>
-
-<p align="center">
-  <a href="https://github.com/medusajs/medusa/blob/master/CONTRIBUTING.md">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs welcome!" />
-  </a>
-  <a href="https://discord.gg/xpCwq3Kfn8">
-    <img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Discord Chat" />
-  </a>
-  <a href="https://twitter.com/intent/follow?screen_name=medusajs">
-    <img src="https://img.shields.io/twitter/follow/medusajs.svg?label=Follow%20@medusajs" alt="Follow @medusajs" />
-  </a>
-</p>
+## Quick Start
 
 ### Prerequisites
 
-To use this Vinext storefront starter, you should have a Medusa server running locally on port 9000.
-For a quick setup, run:
+- Node.js 18+ with `corepack` available
+- Yarn 3.2.3
+- A running Medusa backend
+- A valid Medusa publishable API key
 
-```shell
-npx create-medusa-app@latest
+### Install
+
+```bash
+yarn install
 ```
 
-Check out [create-medusa-app docs](https://docs.medusajs.com/learn/installation) for more details and troubleshooting.
+### Configure
 
-# Overview
+Create `.env.local` and define at least:
 
-The Medusa Vinext Starter is built with:
-
-- [Vinext](https://github.com/cloudflare/vinext)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Typescript](https://www.typescriptlang.org/)
-- [Medusa](https://medusajs.com/)
-
-Features include:
-
-- Full ecommerce support:
-  - Product Detail Page
-  - Product Overview Page
-  - Product Collections
-  - Cart
-  - Checkout with Stripe
-  - User Accounts
-  - Order Details
-- Full Vinext app-router support:
-  - App Router
-  - Server Components
-  - Server Actions
-  - Streaming
-  - Static pre-rendering
-
-# Quickstart
-
-### Setting up the environment variables
-
-Navigate into your projects directory and get your environment variables ready:
-
-```shell
-cd storefront-next/
-mv .env.template .env.local
+```bash
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_...
+MEDUSA_BACKEND_URL=http://localhost:9000
 ```
 
-### Install dependencies
+Notes:
 
-Use Yarn to install all dependencies.
+- `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` is required. The app exits early if it is missing.
+- `MEDUSA_BACKEND_URL` is optional. If omitted, the storefront defaults to `http://localhost:9000`.
 
-```shell
-yarn
-```
+### Run
 
-### Start developing
-
-You are now ready to start up your project.
-
-```shell
+```bash
 yarn dev
 ```
 
-### Open the code and start customizing
+The default development server runs on `http://localhost:8000`.
 
-Your site is now running at http://localhost:8000!
+## Scripts
 
-# Payment integrations
+- `yarn dev`: start Vinext in development mode on port `8000`
+- `yarn build`: build the storefront with Vinext
+- `yarn start`: start the production server on port `8000`
+- `yarn lint`: run ESLint with the flat config in [eslint.config.mjs](./eslint.config.mjs)
 
-By default this starter supports the following payment integrations
+## Verification
 
-- [Stripe](https://stripe.com/)
+These are the baseline verification commands for this app:
 
-To enable the integrations you need to add the following to your `.env.local` file:
-
-```shell
-NEXT_PUBLIC_STRIPE_KEY=<your-stripe-public-key>
+```bash
+yarn lint
+./node_modules/.bin/tsc --noEmit
+yarn build
 ```
 
-You'll also need to setup the integrations in your Medusa server. See the [Medusa documentation](https://docs.medusajs.com) for more information on how to configure [Stripe](https://docs.medusajs.com/resources/commerce-modules/payment/payment-provider/stripe#main).
+Current migration status:
 
-# Resources
+- `next` has been removed from dependencies
+- build passes on Vinext
+- type check passes
+- lint passes
 
-## Learn more about Medusa
+## Architecture Notes
 
-- [Website](https://www.medusajs.com/)
-- [GitHub](https://github.com/medusajs)
-- [Documentation](https://docs.medusajs.com/)
+- Vinext is enabled through [vite.config.ts](./vite.config.ts).
+- The app still uses App Router-style modules under `src/app`.
+- Medusa SDK configuration lives in [src/lib/config.ts](./src/lib/config.ts).
+- Compatibility declarations for `next/*` imports live in [vinext-env.d.ts](./vinext-env.d.ts).
+- The main app config is still stored in [next.config.mjs](./next.config.mjs), but its type is `import("vinext").NextConfig`.
 
-## Learn more about Vinext
+## Migration Notes: Next.js to Vinext
 
-- [GitHub](https://github.com/cloudflare/vinext)
+This repo has already been migrated away from the Next.js runtime. The important implementation details are below.
+
+### 1. Runtime and Tooling
+
+- All package scripts now call `vinext`, not `next`.
+- The `next` package and `eslint-config-next` have been removed.
+- ESLint now uses a local flat config instead of Next-specific lint integration.
+
+### 2. Compatibility Strategy
+
+This codebase intentionally still imports modules such as:
+
+- `next/navigation`
+- `next/cache`
+- `next/headers`
+- `next/image`
+- `next/link`
+- `next/server`
+
+Those imports are preserved for compatibility and mapped through [vinext-env.d.ts](./vinext-env.d.ts) to Vinext shims.
+
+Why this was kept:
+
+- It minimizes diff against the original Medusa storefront structure.
+- It preserves route/component parity during migration.
+- It avoids a risky full rewrite of every framework-facing import at once.
+
+### 3. Request Caching Notes
+
+The project still uses `next`-style fetch metadata such as `next.tags` and `next.revalidate` in server-side data access. To keep TypeScript happy under Vinext, `RequestInit` is augmented in [vinext-env.d.ts](./vinext-env.d.ts).
+
+### 4. Image Behavior Difference
+
+One migration gotcha was image sizing.
+
+Under Vinext, `next/image` compatibility with `fill` did not always size the rendered `<img>` to the full wrapper height by itself. In this storefront, the fix was to explicitly set:
+
+- `h-full`
+- `w-full`
+
+on image elements that rely on `fill`, such as:
+
+- [src/modules/products/components/thumbnail/index.tsx](./src/modules/products/components/thumbnail/index.tsx)
+- [src/modules/products/components/image-gallery/index.tsx](./src/modules/products/components/image-gallery/index.tsx)
+
+If product or gallery images stop filling their aspect-ratio containers after future upgrades, check those two components first.
+
+### 5. Yarn / Corepack Notes
+
+This repo uses Yarn Berry (`packageManager: yarn@3.2.3`).
+
+To avoid failures on machines that still resolve to Yarn 1 globally, the repository vendors Yarn locally through:
+
+- [`.yarnrc.yml`](./.yarnrc.yml)
+- [`.yarn/releases/yarn-3.2.3.cjs`](./.yarn/releases/yarn-3.2.3.cjs)
+
+So `yarn dev` should work even if the shell still points to a Yarn 1 binary first.
+
+### 6. What Was Updated During Migration
+
+- package scripts switched from Next.js to Vinext
+- `next-env.d.ts` removed
+- TypeScript config cleaned up for Vinext
+- ambient framework shims added in [vinext-env.d.ts](./vinext-env.d.ts)
+- product/account/order route parity fixes applied
+- localized account and order links restored
+- checkout hydration issues fixed
+- product image sizing adjusted for Vinext image runtime behavior
+
+### 7. What To Watch After Upgrades
+
+If Vinext, Vite, or Medusa packages are upgraded, re-check:
+
+- account and order routes
+- checkout hydration and shipping selection flow
+- image sizing in store grid and product gallery
+- Medusa SDK query typings
+- `next/*` shim compatibility
+
+## Known Warnings
+
+`yarn build` may still print non-blocking warnings from the underlying Vite/Rolldown toolchain, including:
+
+- `treeshake.preset` input warnings
+- chunk size warnings
+
+These do not currently block a successful build, but they should be revisited if the toolchain is upgraded.
+
+## Payment Integration
+
+This storefront includes Stripe support.
+
+Add the publishable key to `.env.local`:
+
+```bash
+NEXT_PUBLIC_STRIPE_KEY=pk_...
+```
+
+You must also configure Stripe in the Medusa backend.
+
+## References
+
+- Medusa: https://docs.medusajs.com/
+- Vinext: https://github.com/cloudflare/vinext
