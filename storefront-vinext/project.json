@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "storefront-vinext",
+  "root": "storefront-vinext",
+  "sourceRoot": "storefront-vinext/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-vinext",
+        "command": "yarn build"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-vinext",
+        "command": "yarn dev"
+      },
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-vinext",
+        "command": "yarn start"
+      },
+      "cache": false
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-vinext",
+        "command": "yarn lint"
+      },
+      "cache": false
+    },
+    "analyze": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-vinext",
+        "command": "ANALYZE=true yarn build"
+      },
+      "cache": false
+    }
+  }
+}

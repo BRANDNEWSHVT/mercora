@@ -1,0 +1,13 @@
+{
+  "name": "mercora",
+  "private": true,
+  "scripts": {
+    "nx": "nx",
+    "dev": "nx run-many -t dev --projects=medusa,storefront-vinext --parallel",
+    "build": "nx run-many -t build --projects=medusa,storefront-vinext --parallel",
+    "lint": "nx run storefront-vinext:lint"
+  },
+  "devDependencies": {
+    "nx": "^22.7.1"
+  }
+}

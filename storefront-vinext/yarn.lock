@@ -6060,6 +6060,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"image-size@npm:2.0.2":
+  version: 2.0.2
+  resolution: "image-size@npm:2.0.2"
+  bin:
+    image-size: bin/image-size.js
+  checksum: 33c3fafdd8af6bb2727bca51c4bae6e6dac16e9715337a6685a1af29fcbf7a2f9ec75eeaaa61e82d20f74d6f1fa748110936e32b1dbea4521217133eb159a29d
+  languageName: node
+  linkType: hard
+
 "import-fresh@npm:^3.2.1":
   version: 3.3.1
   resolution: "import-fresh@npm:3.3.1"
@@ -6634,7 +6643,7 @@ __metadata:
     tailwindcss-radix: ^4.0.2
     typescript: ^5.9.3
     typescript-eslint: ^8.58.1
-    vinext: 0.0.41
+    vinext: ^0.0.47
     vite: ^8.0.5
     webpack: ^5
   languageName: unknown
@@ -8142,12 +8151,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vinext@npm:0.0.41":
-  version: 0.0.41
-  resolution: "vinext@npm:0.0.41"
+"vinext@npm:^0.0.47":
+  version: 0.0.47
+  resolution: "vinext@npm:0.0.47"
   dependencies:
     "@unpic/react": ^1.0.2
     "@vercel/og": ^0.8.6
+    image-size: 2.0.2
     magic-string: ^0.30.21
     vite-plugin-commonjs: ^0.10.4
     vite-tsconfig-paths: ^6.1.1
@@ -8168,7 +8178,7 @@ __metadata:
       optional: true
   bin:
     vinext: dist/cli.js
-  checksum: fbdbc5fa10cae6728a0a74e4ed79dcb4b288079ea83e5bbb05ea9b932ac51424e7d11616bb268e7929cd598f7956b2924a8a0218b7b9b77ec9e9e74d4e4063fe
+  checksum: bcf105c8126176427eaa59fa89b1bd49c7103d3777661c8de9c2af60cc7df9dbf43c61971a1e0faad047d14d8e27f84472f7ca5be560c991915143f5ea092642
   languageName: node
   linkType: hard
 
