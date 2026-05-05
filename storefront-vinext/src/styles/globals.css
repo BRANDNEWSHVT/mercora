@@ -16,8 +16,206 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--border-base, currentcolor);
   }
+
+  :root,
+  [data-mode="light"] {
+    --bg-base: #ffffff;
+    --bg-base-hover: #f8f6f2;
+    --bg-base-pressed: #efe9df;
+    --bg-subtle: #f6f3ee;
+    --bg-subtle-hover: #f0ebe3;
+    --bg-subtle-pressed: #e8e1d6;
+    --bg-component: #ffffff;
+    --bg-component-hover: #f8f6f2;
+    --bg-component-pressed: #efe9df;
+    --bg-field: #ffffff;
+    --bg-field-hover: #f8f6f2;
+    --bg-field-component: #ffffff;
+    --bg-field-component-hover: #f8f6f2;
+    --bg-interactive: #111111;
+    --bg-interactive-hover: #232323;
+    --bg-highlight: #f2eee7;
+    --bg-highlight-hover: #e9e2d7;
+    --bg-disabled: #f1ede6;
+    --fg-base: #111111;
+    --fg-subtle: #3f3f3d;
+    --fg-muted: #6b6862;
+    --fg-disabled: #a7a299;
+    --fg-interactive: #111111;
+    --fg-interactive-hover: #2a2a2a;
+    --fg-on-color: #ffffff;
+    --fg-on-inverted: #ffffff;
+    --fg-error: #d30005;
+    --border-base: #d8d1c6;
+    --border-strong: #111111;
+    --border-interactive: #111111;
+    --border-transparent: transparent;
+    --button-neutral: #ffffff;
+    --button-neutral-hover: #f6f3ee;
+    --button-neutral-pressed: #ebe4d7;
+    --button-inverted: #111111;
+    --button-inverted-hover: #232323;
+    --button-inverted-pressed: #050505;
+    --button-danger: #d30005;
+    --button-danger-hover: #a50003;
+    --button-danger-pressed: #780700;
+    --border-danger: #d30005;
+    --bg-overlay: rgba(17, 17, 17, 0.42);
+    --alpha-250: rgba(17, 17, 17, 0.1);
+    --alpha-400: rgba(17, 17, 17, 0.24);
+    --tag-neutral-bg: #f6f3ee;
+    --tag-neutral-bg-hover: #ece5d8;
+    --tag-neutral-border: #d8d1c6;
+    --tag-neutral-text: #111111;
+    --tag-neutral-icon: #6b6862;
+    --tag-red-bg: #fff1f1;
+    --tag-red-bg-hover: #ffe1e1;
+    --tag-red-border: #d30005;
+    --tag-red-text: #780700;
+    --tag-red-icon: #d30005;
+    --tag-green-bg: #eef8f1;
+    --tag-green-bg-hover: #e1f1e5;
+    --tag-green-border: #007d48;
+    --tag-green-text: #007d48;
+    --tag-green-icon: #1eaa52;
+    --tag-blue-bg: #f6f3ee;
+    --tag-blue-bg-hover: #ece5d8;
+    --tag-blue-border: #d8d1c6;
+    --tag-blue-text: #3f3f3d;
+    --tag-blue-icon: #6b6862;
+    --tag-orange-bg: #f6f3ee;
+    --tag-orange-bg-hover: #ece5d8;
+    --tag-orange-border: #d8d1c6;
+    --tag-orange-text: #3f3f3d;
+    --tag-orange-icon: #6b6862;
+    --tag-purple-bg: #f6f3ee;
+    --tag-purple-bg-hover: #ece5d8;
+    --tag-purple-border: #d8d1c6;
+    --tag-purple-text: #3f3f3d;
+    --tag-purple-icon: #6b6862;
+    --borders-focus:
+      0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 0px 0px 3px rgba(17, 17, 17, 0.12);
+    --borders-interactive-with-active:
+      0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 0px 0px 4px rgba(17, 17, 17, 0.1);
+    --borders-interactive-with-shadow:
+      0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 1px 2px 0px rgba(17, 17, 17, 0.08);
+    --buttons-neutral-focus:
+      0px 1px 2px 0px rgba(17, 17, 17, 0.08), 0px 0px 0px 1px rgba(17, 17, 17, 0.08),
+      0px 0px 0px 2px rgba(255, 255, 255, 1), 0px 0px 0px 4px rgba(17, 17, 17, 0.12);
+    --buttons-inverted-focus:
+      0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1),
+      0px 0px 0px 4px rgba(17, 17, 17, 0.12);
+    --buttons-danger-focus:
+      0px 0px 0px 1px rgba(211, 0, 5, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1),
+      0px 0px 0px 4px rgba(211, 0, 5, 0.16);
+    --details-contrast-on-bg-interactive:
+      0px 1px 2px 0px rgba(17, 17, 17, 0.28);
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-ui-bg-base text-ui-fg-base font-sans antialiased;
+  }
+}
+
+:root,
+[data-mode="light"] {
+  --bg-base: #ffffff;
+  --bg-base-hover: #f8f6f2;
+  --bg-base-pressed: #efe9df;
+  --bg-subtle: #f6f3ee;
+  --bg-subtle-hover: #f0ebe3;
+  --bg-subtle-pressed: #e8e1d6;
+  --bg-component: #ffffff;
+  --bg-component-hover: #f8f6f2;
+  --bg-component-pressed: #efe9df;
+  --bg-field: #ffffff;
+  --bg-field-hover: #f8f6f2;
+  --bg-field-component: #ffffff;
+  --bg-field-component-hover: #f8f6f2;
+  --bg-interactive: #111111;
+  --bg-interactive-hover: #232323;
+  --bg-highlight: #f2eee7;
+  --bg-highlight-hover: #e9e2d7;
+  --bg-disabled: #f1ede6;
+  --fg-base: #111111;
+  --fg-subtle: #3f3f3d;
+  --fg-muted: #6b6862;
+  --fg-disabled: #a7a299;
+  --fg-interactive: #111111;
+  --fg-interactive-hover: #2a2a2a;
+  --fg-on-color: #ffffff;
+  --fg-on-inverted: #ffffff;
+  --fg-error: #d30005;
+  --border-base: #d8d1c6;
+  --border-strong: #111111;
+  --border-interactive: #111111;
+  --border-transparent: transparent;
+  --button-neutral: #ffffff;
+  --button-neutral-hover: #f6f3ee;
+  --button-neutral-pressed: #ebe4d7;
+  --button-inverted: #111111;
+  --button-inverted-hover: #232323;
+  --button-inverted-pressed: #050505;
+  --button-danger: #d30005;
+  --button-danger-hover: #a50003;
+  --button-danger-pressed: #780700;
+  --border-danger: #d30005;
+  --bg-overlay: rgba(17, 17, 17, 0.42);
+  --alpha-250: rgba(17, 17, 17, 0.1);
+  --alpha-400: rgba(17, 17, 17, 0.24);
+  --tag-neutral-bg: #f6f3ee;
+  --tag-neutral-bg-hover: #ece5d8;
+  --tag-neutral-border: #d8d1c6;
+  --tag-neutral-text: #111111;
+  --tag-neutral-icon: #6b6862;
+  --tag-red-bg: #fff1f1;
+  --tag-red-bg-hover: #ffe1e1;
+  --tag-red-border: #d30005;
+  --tag-red-text: #780700;
+  --tag-red-icon: #d30005;
+  --tag-green-bg: #eef8f1;
+  --tag-green-bg-hover: #e1f1e5;
+  --tag-green-border: #007d48;
+  --tag-green-text: #007d48;
+  --tag-green-icon: #1eaa52;
+  --tag-blue-bg: #f6f3ee;
+  --tag-blue-bg-hover: #ece5d8;
+  --tag-blue-border: #d8d1c6;
+  --tag-blue-text: #3f3f3d;
+  --tag-blue-icon: #6b6862;
+  --tag-orange-bg: #f6f3ee;
+  --tag-orange-bg-hover: #ece5d8;
+  --tag-orange-border: #d8d1c6;
+  --tag-orange-text: #3f3f3d;
+  --tag-orange-icon: #6b6862;
+  --tag-purple-bg: #f6f3ee;
+  --tag-purple-bg-hover: #ece5d8;
+  --tag-purple-border: #d8d1c6;
+  --tag-purple-text: #3f3f3d;
+  --tag-purple-icon: #6b6862;
+  --borders-focus:
+    0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 0px 0px 3px rgba(17, 17, 17, 0.12);
+  --borders-interactive-with-active:
+    0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 0px 0px 4px rgba(17, 17, 17, 0.1);
+  --borders-interactive-with-shadow:
+    0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 1px 2px 0px rgba(17, 17, 17, 0.08);
+  --buttons-neutral-focus:
+    0px 1px 2px 0px rgba(17, 17, 17, 0.08), 0px 0px 0px 1px rgba(17, 17, 17, 0.08),
+    0px 0px 0px 2px rgba(255, 255, 255, 1), 0px 0px 0px 4px rgba(17, 17, 17, 0.12);
+  --buttons-inverted-focus:
+    0px 0px 0px 1px rgba(17, 17, 17, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1),
+    0px 0px 0px 4px rgba(17, 17, 17, 0.12);
+  --buttons-danger-focus:
+    0px 0px 0px 1px rgba(211, 0, 5, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1),
+    0px 0px 0px 4px rgba(211, 0, 5, 0.16);
+  --details-contrast-on-bg-interactive:
+    0px 1px 2px 0px rgba(17, 17, 17, 0.28);
 }
 
 @utility no-scrollbar {

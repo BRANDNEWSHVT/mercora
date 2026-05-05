@@ -84,10 +84,10 @@ export const StripeCardContainer = ({
     return {
       style: {
         base: {
-          fontFamily: "Inter, sans-serif",
-          color: "#424270",
+          fontFamily: "Outfit, system-ui, sans-serif",
+          color: "#111111",
           "::placeholder": {
-            color: "rgb(107 114 128)",
+            color: "rgb(107 104 98)",
           },
         },
       },
