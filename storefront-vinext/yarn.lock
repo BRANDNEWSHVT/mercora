@@ -5367,7 +5367,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:^4.4.3":
+"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:^4.4.3":
   version: 4.4.3
   resolution: "debug@npm:4.4.3"
   dependencies:
@@ -5943,13 +5943,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globrex@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "globrex@npm:0.1.2"
-  checksum: adca162494a176ce9ecf4dd232f7b802956bb1966b37f60c15e49d2e7d961b66c60826366dc2649093cad5a0d69970cfa8875bd1695b5a1a2f33dcd2aa88da3c
-  languageName: node
-  linkType: hard
-
 "gopd@npm:^1.2.0":
   version: 1.2.0
   resolution: "gopd@npm:1.2.0"
@@ -6102,6 +6095,13 @@ __metadata:
   version: 10.1.0
   resolution: "ip-address@npm:10.1.0"
   checksum: 76b1abcdf52a32e2e05ca1f202f3a8ab8547e5651a9233781b330271bd7f1a741067748d71c4cbb9d9906d9f1fa69e7ddc8b4a11130db4534fdab0e908c84e0d
+  languageName: node
+  linkType: hard
+
+"ipaddr.js@npm:^2.1.0":
+  version: 2.4.0
+  resolution: "ipaddr.js@npm:2.4.0"
+  checksum: fc1637656b2c5a7ea4f3f2989deb830a8fc8bef07c1d1f326c2999ee50482681491c6fbe76dde154a940d28f6c44342f9b027d44ce7560d66d44442c7c4d80e0
   languageName: node
   linkType: hard
 
@@ -6643,7 +6643,7 @@ __metadata:
     tailwindcss-radix: ^4.0.2
     typescript: ^5.9.3
     typescript-eslint: ^8.58.1
-    vinext: ^0.0.47
+    vinext: ^1.0.0-beta.0
     vite: ^8.0.5
     webpack: ^5
   languageName: unknown
@@ -7992,20 +7992,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfck@npm:^3.0.3":
-  version: 3.1.6
-  resolution: "tsconfck@npm:3.1.6"
-  peerDependencies:
-    typescript: ^5.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  bin:
-    tsconfck: bin/tsconfck.js
-  checksum: 9ccebfe1317e9890bd0d4743b91880c6c484d01ba16ecaa088031c3e5956591be26174b5780fba2e8328d14c8aefe097d1956ab3697157d15a4fd8eea8ac2843
-  languageName: node
-  linkType: hard
-
 "tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
@@ -8151,24 +8137,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vinext@npm:^0.0.47":
-  version: 0.0.47
-  resolution: "vinext@npm:0.0.47"
+"vinext@npm:^1.0.0-beta.0":
+  version: 1.0.0-beta.0
+  resolution: "vinext@npm:1.0.0-beta.0"
   dependencies:
     "@unpic/react": ^1.0.2
     "@vercel/og": ^0.8.6
     image-size: 2.0.2
+    ipaddr.js: ^2.1.0
     magic-string: ^0.30.21
     vite-plugin-commonjs: ^0.10.4
-    vite-tsconfig-paths: ^6.1.1
+    web-vitals: ^4.2.4
   peerDependencies:
     "@mdx-js/rollup": ^3.0.0
     "@vitejs/plugin-react": ^5.1.4 || ^6.0.0
-    "@vitejs/plugin-rsc": ^0.5.23
-    react: ^19.2.5
-    react-dom: ^19.2.5
-    react-server-dom-webpack: ^19.2.5
-    vite: ^7.0.0 || ^8.0.0
+    "@vitejs/plugin-rsc": ^0.5.26
+    react: ^19.2.6
+    react-dom: ^19.2.6
+    react-server-dom-webpack: ^19.2.6
+    vite: ^8.0.0
   peerDependenciesMeta:
     "@mdx-js/rollup":
       optional: true
@@ -8178,7 +8165,7 @@ __metadata:
       optional: true
   bin:
     vinext: dist/cli.js
-  checksum: bcf105c8126176427eaa59fa89b1bd49c7103d3777661c8de9c2af60cc7df9dbf43c61971a1e0faad047d14d8e27f84472f7ca5be560c991915143f5ea092642
+  checksum: 8c0a32c91aa427e53aa253ea2fb61de84f84468f94ff3e3252ed1af6a4c5e1eced9ec016db35946af0f96b452152c9d69a5b517d4234d4da0a2df772ef590027
   languageName: node
   linkType: hard
 
@@ -8202,19 +8189,6 @@ __metadata:
     fast-glob: ^3.3.2
     magic-string: ^0.30.11
   checksum: 46b009c80db82a8ed935c6ec7c08a8d3d7e5d3118fbfb1b4e18f13e4e9c34db6b3f28fa697d7f78d3f36edae69479a0ba2dfae1b76d2b2ca8e3e06dcf1e9870c
-  languageName: node
-  linkType: hard
-
-"vite-tsconfig-paths@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "vite-tsconfig-paths@npm:6.1.1"
-  dependencies:
-    debug: ^4.1.1
-    globrex: ^0.1.2
-    tsconfck: ^3.0.3
-  peerDependencies:
-    vite: "*"
-  checksum: 380566b99926df66e0a3e78b80cdd25e5be38bf546b22b157e4b3b263f31a049d221d8d6df48c3bcd9bb4eef02d4073645ae2b37fdb9e5bd3d8b30341b2db3de
   languageName: node
   linkType: hard
 
@@ -8294,6 +8268,13 @@ __metadata:
     glob-to-regexp: ^0.4.1
     graceful-fs: ^4.1.2
   checksum: 44a6030e923fbbe2cbc51cd7fb7abdff58bc35ba68d6c3ca46e63b46f8b3502c7253e6ada384387e946df5515d3854227a84cec49eb88a315186f5c9a67a3e79
+  languageName: node
+  linkType: hard
+
+"web-vitals@npm:^4.2.4":
+  version: 4.2.4
+  resolution: "web-vitals@npm:4.2.4"
+  checksum: 5b3ffe1db33f23aebf8cc8560ac574401a95939baafde5841835c1bb1c01f9a2478442f319f77aa0d7914739fc2f6b020c5d5b128c16c5c77ca6be2f9dfbbde6
   languageName: node
   linkType: hard
 
