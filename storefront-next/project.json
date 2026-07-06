@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "name": "storefront-next",
+  "root": "storefront-next",
+  "sourceRoot": "storefront-next/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-next",
+        "command": "yarn build"
+      },
+      "outputs": ["{projectRoot}/.next"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-next",
+        "command": "yarn dev"
+      },
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-next",
+        "command": "yarn start"
+      },
+      "cache": false
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-next",
+        "command": "yarn lint"
+      },
+      "cache": false
+    },
+    "analyze": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "storefront-next",
+        "command": "ANALYZE=true yarn build"
+      },
+      "cache": false
+    }
+  }
+}
