@@ -45,7 +45,7 @@ export const POST = async (
 
   if (!validatedBody.success) {
     return res.status(400).json({
-      errors: validatedBody.error.errors.map((err) => ({
+      errors: validatedBody.error.issues.map((err) => ({
         field: err.path.join("."),
         message: err.message,
       })),
